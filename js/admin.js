@@ -30,7 +30,10 @@
   const etat = {
     cle: "",
     base: PRODUITS.map((p) => ({ ...p })), // produits de js/data.js
-    cat: { modifs: {}, ajouts: [] },       // contenu de js/catalogue.js
+    baseActus: ACTUALITES.map((a) => ({ ...a })), // actualités de js/data.js
+    cat: { modifs: {}, ajouts: [], actus: { modifs: {}, ajouts: [] } }, // contenu de js/catalogue.js
+    onglet: "montre", // montre | parfum | bracelet | actus
+    editionActu: null,
     catSha: null,
     photos: {},    // photos choisies pas encore envoyées : { "__photo:xxx": { blob, url } }
     apercus: {},   // chemin envoyé -> aperçu local (le temps que le site se mette à jour)
@@ -72,9 +75,10 @@
       const texte = base64VersTexte(f.content);
       const m = texte.match(/CATALOGUE_ADMIN\s*=\s*([\s\S]*?);\s*$/);
       const cat = m ? JSON.parse(m[1]) : {};
-      return { cat: { modifs: cat.modifs || {}, ajouts: cat.ajouts || [] }, sha: f.sha };
+      const actus = cat.actus || {};
+      return { cat: { modifs: cat.modifs || {}, ajouts: cat.ajouts || [], actus: { modifs: actus.modifs || {}, ajouts: actus.ajouts || [] } }, sha: f.sha };
     } catch (e) {
-      if (e.status === 404) return { cat: { modifs: {}, ajouts: [] }, sha: null };
+      if (e.status === 404) return { cat: { modifs: {}, ajouts: [], actus: { modifs: {}, ajouts: [] } }, sha: null };
       throw e;
     }
   }
@@ -127,11 +131,68 @@
   // ---------- Affichage ----------
   const LIBELLES = { montre: "Montre", parfum: "Parfum", bracelet: "Bracelet", homme: "Homme", femme: "Femme", mixte: "Homme & femme", enfant: "Enfant" };
 
+  // ---------- Actualités ----------
+  const actus = () => [
+    ...etat.baseActus.map((a) => ({ ...a, ...(etat.cat.actus.modifs[a.id] || {}), ajoute: false })).filter((a) => !a.supprime),
+    ...etat.cat.actus.ajouts.map((a) => ({ ...a, ajoute: true })),
+  ].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+
+  function modifierActu(id, champs) {
+    const ajout = etat.cat.actus.ajouts.find((a) => a.id === id);
+    if (ajout) Object.assign(ajout, champs);
+    else etat.cat.actus.modifs[id] = { ...(etat.cat.actus.modifs[id] || {}), ...champs };
+    etat.modifies.add("actu-" + id);
+    majBarre();
+  }
+
+  const dateFr = (iso) => (iso ? new Date(iso + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) : "");
+  const recherche = () => ($("#recherche").value.trim() ? slug($("#recherche").value).replace(/-/g, " ") : "");
+  const correspond = (texte, q) => !q || slug(texte).replace(/-/g, " ").includes(q);
+
+  const AIDES = {
+    produit: `Changez une photo avec <strong>📷 Photo</strong>, tapez un prix (vide = « Prix sur demande »), modifiez le nom, la description ou les caractéristiques avec <strong>✎ Modifier</strong>, puis appuyez sur <strong>Publier sur le site</strong> en bas.`,
+    actus: `Changez la photo avec <strong>📷 Photo</strong>, modifiez le titre et le texte avec <strong>✎ Modifier</strong>, ou ajoutez une nouvelle actualité. Appuyez ensuite sur <strong>Publier sur le site</strong> en bas.`,
+  };
+  const BOUTON_AJOUT = { montre: "+ Ajouter une montre", parfum: "+ Ajouter un parfum", bracelet: "+ Ajouter un bracelet", actus: "+ Ajouter une actualité" };
+
+  function majOnglets() {
+    const tous = produits();
+    document.querySelectorAll("#onglets button").forEach((b) => {
+      const o = b.dataset.onglet;
+      b.setAttribute("aria-selected", String(o === etat.onglet));
+      b.querySelector(".nb").textContent = o === "actus" ? actus().length : tous.filter((p) => p.type === o).length;
+    });
+    $("#aide").innerHTML = AIDES[etat.onglet === "actus" ? "actus" : "produit"];
+    $("#btn-ajouter").textContent = BOUTON_AJOUT[etat.onglet];
+  }
+
+  function afficherActus() {
+    const q = recherche();
+    const liste = actus().filter((a) => correspond(`${a.titre} ${a.categorie} ${a.resume}`, q));
+    $("#grille").innerHTML = liste.length ? liste.map((a) => `
+      <article class="produit actu${etat.modifies.has("actu-" + a.id) ? " modifie" : ""}" data-actu="${a.id}">
+        <div class="photo">
+          <img src="${esc(srcImage(a.image))}" alt="${esc(a.titre)}" loading="lazy">
+          ${a.categorie ? `<span class="etiquette">${esc(a.categorie)}</span>` : ""}
+          <label class="btn-photo">📷 Photo<input type="file" accept="image/*" class="choix-photo" hidden></label>
+        </div>
+        <div class="infos">
+          <span class="actu-date">${esc(dateFr(a.date))}</span>
+          <h3>${esc(a.titre)}</h3>
+          <p class="actu-resume">${esc(a.resume || "")}</p>
+          <div class="actions-produit">
+            <button class="btn btn-ligne editer" type="button">✎ Modifier</button>
+            <button class="btn btn-rouge supprimer" type="button">Supprimer</button>
+          </div>
+        </div>
+      </article>`).join("") : `<p class="vide">Aucune actualité.</p>`;
+  }
+
   function afficher() {
-    const q = $("#recherche").value.trim() ? slug($("#recherche").value).replace(/-/g, " ") : "";
-    const type = $("#filtre-type").value;
-    const liste = produits().filter((p) =>
-      (!type || p.type === type) && (!q || slug(`${p.nom} ${p.marque}`).replace(/-/g, " ").includes(q)));
+    majOnglets();
+    if (etat.onglet === "actus") return afficherActus();
+    const q = recherche();
+    const liste = produits().filter((p) => p.type === etat.onglet && correspond(`${p.nom} ${p.marque}`, q));
     $("#grille").innerHTML = liste.length ? liste.map((p) => `
       <article class="produit${p.masque ? " masque" : ""}${etat.modifies.has(p.id) ? " modifie" : ""}" data-id="${p.id}">
         <div class="photo">
@@ -148,7 +209,7 @@
           </label>
           <label class="interrupteur"><input type="checkbox" class="masquer"${p.masque ? " checked" : ""}> Masquer du site</label>
           <div class="actions-produit">
-            <button class="btn btn-ligne editer" type="button">✎ Nom, description…</button>
+            <button class="btn btn-ligne editer" type="button">✎ Modifier</button>
             <button class="btn btn-rouge supprimer" type="button">Supprimer</button>
           </div>
         </div>
@@ -159,7 +220,7 @@
     const n = etat.modifies.size;
     const el = $("#etat");
     el.className = "etat " + classe;
-    el.textContent = message || (n ? `${n} produit${n > 1 ? "s" : ""} modifié${n > 1 ? "s" : ""}, pas encore publié${n > 1 ? "s" : ""}.` : "Aucune modification.");
+    el.textContent = message || (n ? `${n} élément${n > 1 ? "s" : ""} modifié${n > 1 ? "s" : ""}, pas encore publié${n > 1 ? "s" : ""}.` : "Aucune modification.");
     $("#btn-publier").disabled = !n || etat.enCours;
   }
 
@@ -268,6 +329,18 @@
   });
 
   $("#grille").addEventListener("change", async (e) => {
+    const carteActu = e.target.closest("[data-actu]");
+    if (carteActu) {
+      if (e.target.classList.contains("choix-photo") && e.target.files[0]) {
+        try {
+          modifierActu(Number(carteActu.dataset.actu), { image: await preparerPhoto(e.target.files[0]) });
+          afficher();
+        } catch {
+          alert("Cette photo n'a pas pu être lue. Essayez une photo au format JPG ou PNG.");
+        }
+      }
+      return;
+    }
     const id = idDe(e.target);
     if (e.target.classList.contains("masquer")) {
       modifier(id, { masque: e.target.checked || undefined });
@@ -284,6 +357,24 @@
   });
 
   $("#grille").addEventListener("click", (e) => {
+    const carteActu = e.target.closest("[data-actu]");
+    if (carteActu) {
+      const id = Number(carteActu.dataset.actu);
+      if (e.target.closest(".editer")) ouvrirFenetreActu(id);
+      if (e.target.closest(".supprimer")) {
+        const a = actus().find((x) => x.id === id);
+        if (!a || !confirm(`Supprimer l'actualité « ${a.titre} » ?\n(La suppression sera effective après « Publier sur le site ».)`)) return;
+        if (a.ajoute) {
+          etat.cat.actus.ajouts = etat.cat.actus.ajouts.filter((x) => x.id !== id);
+          etat.modifies.add("actu-" + id);
+          majBarre();
+        } else {
+          modifierActu(id, { supprime: true });
+        }
+        afficher();
+      }
+      return;
+    }
     if (e.target.closest(".editer")) ouvrirFenetre(idDe(e.target));
     if (e.target.closest(".supprimer")) {
       const id = idDe(e.target);
@@ -301,7 +392,81 @@
   });
 
   $("#recherche").addEventListener("input", afficher);
-  $("#filtre-type").addEventListener("change", afficher);
+  $("#onglets").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-onglet]");
+    if (!b || b.dataset.onglet === etat.onglet) return;
+    etat.onglet = b.dataset.onglet;
+    $("#recherche").value = "";
+    afficher();
+    window.scrollTo({ top: 0 });
+  });
+
+  // ---------- Fenêtre actualité ----------
+  const fenetreActu = $("#fenetre-actu");
+  const formActu = $("#form-actu");
+  let photoActu = null;
+
+  function ouvrirFenetreActu(id = null) {
+    etat.editionActu = id;
+    const a = id ? actus().find((x) => x.id === id) : null;
+    formActu.reset();
+    photoActu = a?.image || null;
+    $("#titre-fenetre-actu").textContent = a ? "Modifier l'actualité" : "Ajouter une actualité";
+    formActu.titre.value = a?.titre || "";
+    formActu.categorie.value = a?.categorie || "";
+    formActu.date.value = a?.date || new Date().toISOString().slice(0, 10);
+    formActu.resume.value = a?.resume || "";
+    formActu.contenu.value = (a?.contenu || []).join("\n\n");
+    $("#apercu-actu").hidden = !photoActu;
+    $("#apercu-actu").src = photoActu ? srcImage(photoActu) : "";
+    $("#erreur-actu").hidden = true;
+    fenetreActu.showModal();
+  }
+
+  $("#btn-annuler-actu").addEventListener("click", () => fenetreActu.close());
+
+  formActu.photo.addEventListener("change", async () => {
+    if (!formActu.photo.files[0]) return;
+    try {
+      photoActu = await preparerPhoto(formActu.photo.files[0]);
+      $("#apercu-actu").src = srcImage(photoActu);
+      $("#apercu-actu").hidden = false;
+    } catch {
+      alert("Cette photo n'a pas pu être lue. Essayez une photo au format JPG ou PNG.");
+    }
+  });
+
+  formActu.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const err = $("#erreur-actu");
+    const titre = formActu.titre.value.trim();
+    if (!titre || !photoActu) {
+      err.textContent = !titre ? "Indiquez le titre de l'actualité." : "Choisissez une photo.";
+      err.hidden = false;
+      return;
+    }
+    const resume = formActu.resume.value.trim();
+    const contenu = formActu.contenu.value.split(/\n\s*\n/).map((p) => p.replace(/\s*\n\s*/g, " ").trim()).filter(Boolean);
+    const champs = {
+      titre,
+      categorie: formActu.categorie.value.trim() || "La boutique",
+      date: formActu.date.value || new Date().toISOString().slice(0, 10),
+      resume: resume || contenu[0] || titre,
+      contenu: contenu.length ? contenu : [resume || titre],
+      image: photoActu,
+    };
+    if (etat.editionActu) {
+      modifierActu(etat.editionActu, champs);
+    } else {
+      const id = Math.max(99, ...actus().map((a) => a.id), ...etat.baseActus.map((a) => a.id)) + 1;
+      etat.cat.actus.ajouts.unshift({ id, ...champs });
+      etat.modifies.add("actu-" + id);
+      majBarre();
+      $("#recherche").value = "";
+    }
+    fenetreActu.close();
+    afficher();
+  });
 
   // ---------- Fenêtre ajout / modification ----------
   const fenetre = $("#fenetre");
@@ -335,6 +500,9 @@
       form.badge.value = p.badge || "";
       form.description.value = p.description || "";
       form.details.value = (p.details || []).join("\n");
+    } else {
+      form.type.value = etat.onglet; // on ajoute dans la rubrique ouverte
+      $("#titre-fenetre").textContent = BOUTON_AJOUT[etat.onglet].replace("+ ", "");
     }
     $("#apercu").hidden = !photoFenetre;
     $("#apercu").src = photoFenetre ? srcImage(photoFenetre) : "";
@@ -343,7 +511,7 @@
     fenetre.showModal();
   }
 
-  $("#btn-ajouter").addEventListener("click", () => ouvrirFenetre());
+  $("#btn-ajouter").addEventListener("click", () => (etat.onglet === "actus" ? ouvrirFenetreActu() : ouvrirFenetre()));
   $("#btn-annuler").addEventListener("click", () => fenetre.close());
 
   form.photo.addEventListener("change", async () => {
@@ -395,8 +563,8 @@
       etat.modifies.add(id);
       majBarre();
       $("#recherche").value = "";
-      $("#filtre-type").value = "";
     }
+    etat.onglet = type; // on affiche la rubrique du produit (utile si la catégorie a changé)
     for (const p of etat.cat.ajouts) for (const k of Object.keys(p)) if (p[k] === undefined) delete p[k];
     fenetre.close();
     afficher();
@@ -418,15 +586,17 @@
 
       // 2. Envoyer les nouvelles photos utilisées
       const cat = JSON.parse(JSON.stringify(etat.cat));
-      const elements = [...Object.values(cat.modifs), ...cat.ajouts];
+      const elements = [...Object.values(cat.modifs), ...cat.ajouts, ...Object.values(cat.actus.modifs), ...cat.actus.ajouts];
       const arbre = [];
       const remplacements = {};
       for (const el of elements) {
         const photo = etat.photos[el.image];
         if (!photo) continue;
         if (!remplacements[el.image]) {
-          const nom = el.nom || etat.base.find((p) => cat.modifs[p.id] === el)?.nom || "produit";
-          const chemin = `images/produits/${slug(nom)}-${Date.now().toString(36)}${arbre.length}.jpg`;
+          const nom = el.nom || el.titre || etat.base.find((p) => cat.modifs[p.id] === el)?.nom ||
+            etat.baseActus.find((a) => cat.actus.modifs[a.id] === el)?.titre || "photo";
+          const dossier = el.nom !== undefined || Object.values(cat.modifs).includes(el) ? "produits" : "actualites";
+          const chemin = `images/${dossier}/${slug(nom)}-${Date.now().toString(36)}${arbre.length}.jpg`;
           const blob = await gh("/git/blobs", { method: "POST", body: JSON.stringify({ content: await blobVersBase64(photo.blob), encoding: "base64" }) });
           arbre.push({ path: chemin, mode: "100644", type: "blob", sha: blob.sha });
           remplacements[el.image] = chemin;
@@ -441,7 +611,7 @@
       const nouvelArbre = await gh("/git/trees", { method: "POST", body: JSON.stringify({ base_tree: dernier.tree.sha, tree: arbre }) });
       const n = etat.modifies.size;
       const commit = await gh("/git/commits", { method: "POST", body: JSON.stringify({
-        message: `Espace gestion (${etat.nom}) : ${n} produit${n > 1 ? "s" : ""} mis à jour`,
+        message: `Espace gestion (${etat.nom}) : ${n} élément${n > 1 ? "s" : ""} mis à jour`,
         tree: nouvelArbre.sha,
         parents: [ref.object.sha],
       }) });

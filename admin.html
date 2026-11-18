@@ -97,6 +97,18 @@
     label.champ > textarea { min-height: 80px; resize: vertical; }
     .erreur { color: var(--rouge); font-size: .9rem; margin-top: 10px; }
 
+    /* Onglets */
+    .onglets { display: flex; gap: 6px; margin: 0 -16px 16px; padding: 0 16px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--bord); }
+    .onglets::-webkit-scrollbar { display: none; }
+    .onglets button { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; padding: 12px 16px; font-weight: 600; color: var(--gris); border-bottom: 3px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+    .onglets button:hover { color: var(--texte); }
+    .onglets button[aria-selected="true"] { color: var(--noir); border-bottom-color: var(--or); }
+    .onglets .nb { font-size: .75rem; background: #ece5da; color: var(--gris); border-radius: 20px; padding: 1px 8px; }
+    .onglets button[aria-selected="true"] .nb { background: var(--or); color: var(--noir); }
+    .produit.actu .photo { aspect-ratio: 16 / 10; }
+    .actu-date { font-size: .78rem; color: var(--or-fonce); font-weight: 600; letter-spacing: .02em; }
+    .actu-resume { font-size: .86rem; color: var(--gris); display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
     /* Barre d'outils */
     .outils { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
     .outils input, .outils select { padding: 10px 12px; border: 1px solid var(--bord); border-radius: 10px; background: var(--blanc); min-height: 44px; font-size: 1rem; }
@@ -154,7 +166,7 @@
   <header>
     <div>
       <h1>La Maison du Temps</h1>
-      <small>Espace gestion : photos et prix</small>
+      <small>Espace gestion</small>
     </div>
     <nav>
       <span id="qui" hidden></span>
@@ -207,20 +219,16 @@
 
     <!-- Gestion -->
     <section id="gestion" hidden>
-      <div class="aide">
-        Changez une photo avec <strong>📷 Photo</strong>, tapez un prix (laissez vide pour « Prix sur demande »),
-        changez le nom ou la description avec <strong>✎ Nom, description…</strong>,
-        puis appuyez sur <strong>Publier sur le site</strong> en bas. Le site est à jour 1 à 2 minutes après.
-      </div>
+      <nav class="onglets" id="onglets" role="tablist" aria-label="Rubriques">
+        <button type="button" role="tab" data-onglet="montre" aria-selected="true">⌚ Montres <span class="nb"></span></button>
+        <button type="button" role="tab" data-onglet="parfum" aria-selected="false">🧴 Parfums <span class="nb"></span></button>
+        <button type="button" role="tab" data-onglet="bracelet" aria-selected="false">📿 Bracelets <span class="nb"></span></button>
+        <button type="button" role="tab" data-onglet="actus" aria-selected="false">📰 Actualités <span class="nb"></span></button>
+      </nav>
+      <div class="aide" id="aide"></div>
       <div class="outils">
-        <input id="recherche" type="search" placeholder="Rechercher un produit…">
-        <select id="filtre-type">
-          <option value="">Tout</option>
-          <option value="montre">Montres</option>
-          <option value="parfum">Parfums</option>
-          <option value="bracelet">Bracelets</option>
-        </select>
-        <button class="btn btn-noir" id="btn-ajouter" type="button">+ Ajouter un produit</button>
+        <input id="recherche" type="search" placeholder="Rechercher…">
+        <button class="btn btn-noir" id="btn-ajouter" type="button">+ Ajouter</button>
       </div>
       <div class="grille" id="grille"></div>
     </section>
@@ -283,6 +291,42 @@
       <p class="erreur" id="erreur-produit" hidden></p>
       <div class="pied">
         <button class="btn btn-ligne" type="button" id="btn-annuler">Annuler</button>
+        <button class="btn btn-or" type="submit">Valider</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Ajout / modification d'une actualité -->
+  <dialog id="fenetre-actu">
+    <form id="form-actu" method="dialog">
+      <h2 id="titre-fenetre-actu">Ajouter une actualité</h2>
+      <label class="champ">Titre *
+        <input name="titre" required maxlength="100" placeholder="Ex. Nouvel arrivage de montres Casio">
+      </label>
+      <div class="deux">
+        <label class="champ">Catégorie
+          <input name="categorie" maxlength="30" list="categories-actu" placeholder="Ex. Nouvel arrivage">
+          <datalist id="categories-actu">
+            <option value="Nouvel arrivage"><option value="Promotion"><option value="Idées cadeaux"><option value="Parfums"><option value="La boutique">
+          </datalist>
+        </label>
+        <label class="champ">Date
+          <input name="date" type="date" required>
+        </label>
+      </div>
+      <label class="champ">Résumé (affiché sur la liste)
+        <textarea name="resume" maxlength="250" placeholder="Une ou deux phrases"></textarea>
+      </label>
+      <label class="champ">Texte complet (laissez une ligne vide entre les paragraphes)
+        <textarea name="contenu" maxlength="3000" style="min-height:140px"></textarea>
+      </label>
+      <label class="champ">Photo *
+        <input name="photo" type="file" accept="image/*">
+        <img class="apercu" id="apercu-actu" alt="" hidden>
+      </label>
+      <p class="erreur" id="erreur-actu" hidden></p>
+      <div class="pied">
+        <button class="btn btn-ligne" type="button" id="btn-annuler-actu">Annuler</button>
         <button class="btn btn-or" type="submit">Valider</button>
       </div>
     </form>

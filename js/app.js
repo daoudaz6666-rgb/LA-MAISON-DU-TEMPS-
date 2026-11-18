@@ -17,6 +17,14 @@
     });
     PRODUITS.push(...(c.ajouts || []));
     for (let i = PRODUITS.length - 1; i >= 0; i--) if (PRODUITS[i].masque) PRODUITS.splice(i, 1);
+    // Actualités modifiées, ajoutées ou supprimées
+    const actus = c.actus || {};
+    Object.entries(actus.modifs || {}).forEach(([id, m]) => {
+      const a = ACTUALITES.find((x) => String(x.id) === id);
+      if (a) Object.assign(a, m);
+    });
+    ACTUALITES.push(...(actus.ajouts || []));
+    for (let i = ACTUALITES.length - 1; i >= 0; i--) if (ACTUALITES[i].supprime) ACTUALITES.splice(i, 1);
   })();
 
   // ---------- Utilitaires ----------
