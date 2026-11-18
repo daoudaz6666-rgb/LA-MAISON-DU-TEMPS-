@@ -224,6 +224,8 @@
                 <li><a href="tel:${BOUTIQUE.telephone.replace(/\s/g, "")}">${BOUTIQUE.telephone}</a></li>
                 <li><a href="mailto:${BOUTIQUE.email}">${BOUTIQUE.email}</a></li>
                 <li><a href="https://wa.me/${BOUTIQUE.whatsapp}" target="_blank" rel="noopener">WhatsApp : ${esc(BOUTIQUE.whatsappAffiche)}</a></li>
+                ${BOUTIQUE.instagram ? `<li><a href="https://www.instagram.com/${encodeURIComponent(BOUTIQUE.instagram)}/" target="_blank" rel="noopener">Instagram : @${esc(BOUTIQUE.instagram)}</a></li>` : ""}
+                ${BOUTIQUE.facebook ? `<li><a href="https://www.facebook.com/${encodeURIComponent(BOUTIQUE.facebook)}" target="_blank" rel="noopener">Facebook : ${esc(BOUTIQUE.facebook)}</a></li>` : ""}
                 ${BOUTIQUE.snapchat ? `<li><a href="https://www.snapchat.com/add/${encodeURIComponent(BOUTIQUE.snapchat)}" target="_blank" rel="noopener">Snapchat : ${esc(BOUTIQUE.snapchat.toUpperCase())}</a></li>` : ""}
               </ul>
             </div>

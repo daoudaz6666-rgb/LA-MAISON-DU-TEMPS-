@@ -76,7 +76,7 @@
     horaires: ["horaire", "horaires", "heure", "heures", "ouvert", "ouverte", "ouverture", "ferme", "fermeture", "dimanche", "aujourd hui"],
     adresse: ["adresse", "situe", "situee", "localisation", "localiser", "itineraire", "plan", "maps", "venir", "trouver la boutique", "ou etes vous", "ou se trouve", "magasin", "boutique physique", "quartier",
       "et ou", "ou est", "c est ou", "ou etes", "ou vous trouver", "ou se situe", "ou vous etes", "vous etes ou"],
-    contact: ["telephone", "tel", "numero", "appeler", "appel", "contact", "contacter", "joindre", "whatsapp", "wa", "snap", "snapchat", "reseaux", "reseaux sociaux"],
+    contact: ["telephone", "tel", "numero", "appeler", "appel", "contact", "contacter", "joindre", "whatsapp", "wa", "snap", "snapchat", "reseaux", "reseaux sociaux", "instagram", "insta", "facebook", "fb", "email", "mail", "e mail"],
     livraison: ["livraison", "livrer", "livrez", "livre", "expedition", "expedier", "envoyer", "envoi"],
     paiement: ["paiement", "payer", "paye", "orange money", "moov", "moov money", "mobile money", "especes", "carte bancaire"],
     prix: ["prix", "combien", "cout", "coute", "coutent", "tarif", "tarifs", "cher", "budget", "fcfa", "francs", "moins cher", "pas cher"],
@@ -145,7 +145,7 @@
     // 1) Infos pratiques sur la boutique
     if (i("horaires")) parties.push(`🕗 <strong>Horaires :</strong> ${esc(BOUTIQUE.horaires)}.`);
     if (i("adresse")) parties.push(`📍 <strong>Adresse :</strong> ${esc(BOUTIQUE.adresse)} (${esc(BOUTIQUE.boitePostale)}).<br>${bouton("Itinéraire Google Maps", BOUTIQUE.carte, true)}`);
-    if (i("contact")) parties.push(`📞 <strong>Téléphone :</strong> <a href="tel:${tel}">${esc(BOUTIQUE.telephone)}</a><br>💬 <strong>WhatsApp :</strong> ${esc(BOUTIQUE.whatsappAffiche)}${BOUTIQUE.snapchat ? `<br>👻 <strong>Snapchat :</strong> ${esc(BOUTIQUE.snapchat.toUpperCase())}` : ""}<br>${bouton("Écrire sur WhatsApp", lienWa("Bonjour La Maison du Temps !"), true)}`);
+    if (i("contact")) parties.push(`📞 <strong>Téléphone :</strong> <a href="tel:${tel}">${esc(BOUTIQUE.telephone)}</a><br>💬 <strong>WhatsApp :</strong> ${esc(BOUTIQUE.whatsappAffiche)}${BOUTIQUE.instagram ? `<br>📸 <strong>Instagram :</strong> <a href="https://www.instagram.com/${encodeURIComponent(BOUTIQUE.instagram)}/" target="_blank" rel="noopener">@${esc(BOUTIQUE.instagram)}</a>` : ""}${BOUTIQUE.facebook ? `<br>👍 <strong>Facebook :</strong> <a href="https://www.facebook.com/${encodeURIComponent(BOUTIQUE.facebook)}" target="_blank" rel="noopener">${esc(BOUTIQUE.facebook)}</a>` : ""}${BOUTIQUE.snapchat ? `<br>👻 <strong>Snapchat :</strong> ${esc(BOUTIQUE.snapchat.toUpperCase())}` : ""}<br>✉️ <strong>E-mail :</strong> <a href="mailto:${esc(BOUTIQUE.email)}">${esc(BOUTIQUE.email)}</a><br>${bouton("Écrire sur WhatsApp", lienWa("Bonjour La Maison du Temps !"), true)}`);
     if (i("livraison")) parties.push(`🚚 Pour la livraison (délais, zones, frais), le plus simple est de nous écrire sur WhatsApp au ${esc(BOUTIQUE.whatsappAffiche)} : nous vous répondons rapidement.`);
     if (i("paiement")) parties.push(`💳 Pour les moyens de paiement acceptés, contactez-nous sur WhatsApp au ${esc(BOUTIQUE.whatsappAffiche)} ou passez en boutique.`);
     if (i("authenticite")) parties.push(`ℹ️ Pour toute question sur l'origine, les papiers ou la garantie d'un modèle précis, contactez directement la boutique : l'équipe vous répondra pour chaque pièce.<br>${bouton("Poser la question sur WhatsApp", lienWa("Bonjour, j'ai une question sur la garantie d'un modèle."), true)}`);

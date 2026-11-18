@@ -25,12 +25,14 @@ const BOUTIQUE = {
   devise: "FCFA",
   whatsapp: "22661216062", // numéro WhatsApp (indicatif 226 sans +, sans espaces)
   whatsappAffiche: "+226 61 21 60 62", // numéro WhatsApp tel qu'il s'affiche sur le site
-  email: "contact@lamaisondutemps.com", // ← remplacer par votre vraie adresse e-mail
+  email: "vqregis79@gmail.com",
   telephone: "+226 74 18 17 13",
   snapchat: "president_vampa",
+  instagram: "president_vampa",
+  facebook: "Maison-Temps10", // nom de la page Facebook (lien : facebook.com/Maison-Temps10)
   adresse: "1200 Logements, Ouagadougou 01",
   boitePostale: "01 BP 6829 Ouagadougou 01",
-  horaires: "Ouvert tous les jours · Ferme à 20h00",
+  horaires: "Ouvert tous les jours · 9h00 – 22h00",
   pluscode: "9G74+G9C Ouagadougou",
   carte: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("La Maison du Temps 9G74+G9C Ouagadougou"),
   carteEmbed: "https://maps.google.com/maps?q=" + encodeURIComponent("9G74+G9C Ouagadougou") + "&z=16&output=embed",
@@ -218,9 +220,9 @@ const ACTUALITES = [
   { id: 1, date: "2026-08-01", categorie: "La boutique",
     titre: "Bienvenue à La Maison du Temps",
     image: IMG("1557531365-e8b22d93dbd0"),
-    resume: "Votre horlogerie aux 1200 Logements, à Ouagadougou. Ouvert tous les jours jusqu'à 20h.",
+    resume: "Votre horlogerie aux 1200 Logements, à Ouagadougou. Ouvert tous les jours de 9h à 22h.",
     contenu: [
-      "La Maison du Temps vous accueille aux 1200 Logements, à Ouagadougou, tous les jours jusqu'à 20h00.",
+      "La Maison du Temps vous accueille aux 1200 Logements, à Ouagadougou, tous les jours de 9h00 à 22h00.",
       "Montres de prestige, montres de marque, parfums et bracelets : venez découvrir notre collection et profiter de nos conseils.",
       "Vous pouvez aussi nous appeler au +226 74 18 17 13 ou nous écrire sur WhatsApp au +226 61 21 60 62.",
     ],
