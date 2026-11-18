@@ -7,6 +7,8 @@ montres (Rolex, Omega, Cartier, Audemars Piguet, Hublot, Tissot, Casio, Lacoste�
 
 Ouvrir `index.html` dans un navigateur. Aucune installation n'est nécessaire.
 
+Les modifications faites avec Claude Code sur ce projet sont envoyées automatiquement sur GitHub à la fin de chaque réponse.
+
 ## Structure
 
 | Fichier | Rôle |
