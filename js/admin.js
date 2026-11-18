@@ -23,6 +23,8 @@
   const stockage = {
     lire() { try { return localStorage.getItem(CLE_STOCKAGE) || ""; } catch { return ""; } },
     ecrire(v) { try { v ? localStorage.setItem(CLE_STOCKAGE, v) : localStorage.removeItem(CLE_STOCKAGE); } catch { /* indisponible */ } },
+    lireNom() { try { return localStorage.getItem("lmdt-admin-nom") || ""; } catch { return ""; } },
+    ecrireNom(v) { try { localStorage.setItem("lmdt-admin-nom", v); } catch { /* indisponible */ } },
   };
 
   const etat = {
@@ -201,14 +203,18 @@
   });
 
   // ---------- Connexion ----------
-  async function connecter(cle) {
+  async function connecter(cle, nom) {
     etat.cle = cle;
+    etat.nom = nom;
     const depot = await gh("");
     if (!depot.permissions?.push) { const e = new Error("lecture seule"); e.status = 403; throw e; }
     const { cat, sha } = await lireCatalogue();
     etat.cat = cat;
     etat.catSha = sha;
     stockage.ecrire(cle);
+    stockage.ecrireNom(nom);
+    $("#qui").textContent = "👤 " + nom;
+    $("#qui").hidden = false;
     $("#connexion").hidden = true;
     document.body.classList.remove("page-connexion");
     $("#gestion").hidden = false;
@@ -226,7 +232,8 @@
     bouton.disabled = true;
     bouton.textContent = "Connexion…";
     try {
-      await connecter($("#cle").value.trim());
+      const nom = $("#prenom").value.trim().replace(/\s+/g, " ");
+      await connecter($("#cle").value.trim(), nom.charAt(0).toUpperCase() + nom.slice(1));
     } catch (ex) {
       err.textContent = ex.status === 401 || ex.status === 404 || ex.status === 403
         ? "Clé d'accès incorrecte, expirée ou sans droit d'écriture."
@@ -434,7 +441,7 @@
       const nouvelArbre = await gh("/git/trees", { method: "POST", body: JSON.stringify({ base_tree: dernier.tree.sha, tree: arbre }) });
       const n = etat.modifies.size;
       const commit = await gh("/git/commits", { method: "POST", body: JSON.stringify({
-        message: `Espace gestion : ${n} produit${n > 1 ? "s" : ""} mis à jour (photos / prix)`,
+        message: `Espace gestion (${etat.nom}) : ${n} produit${n > 1 ? "s" : ""} mis à jour`,
         tree: nouvelArbre.sha,
         parents: [ref.object.sha],
       }) });
@@ -463,6 +470,11 @@
   const cleEnregistree = stockage.lire();
   if (cleEnregistree) {
     $("#cle").value = cleEnregistree;
-    connecter(cleEnregistree).catch(() => { stockage.ecrire(""); $("#cle").value = ""; });
+  }
+  const nomEnregistre = stockage.lireNom();
+  if (nomEnregistre) $("#prenom").value = nomEnregistre;
+  // Reconnexion automatique seulement si le prénom est connu ; sinon on le demande d'abord
+  if (cleEnregistree && nomEnregistre) {
+    connecter(cleEnregistree, nomEnregistre).catch(() => { stockage.ecrire(""); $("#cle").value = ""; });
   }
 })();
