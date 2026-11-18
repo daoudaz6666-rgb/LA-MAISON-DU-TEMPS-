@@ -5,7 +5,14 @@ window.CATALOGUE_ADMIN = {
   "1": {
    "prix": 15000,
    "image": "images/produits/patek-philippe-geneve-mwmk4sgf0.jpg",
-   "illustration": false
+   "illustration": false,
+   "nom": "CASIO",
+   "marque": "CASIO",
+   "type": "montre",
+   "genre": "homme",
+   "gamme": "prestige",
+   "badge": "Prestige",
+   "description": "Un cadran épuré et des finitions d'exception."
   }
  },
  "ajouts": []
