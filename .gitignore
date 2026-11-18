@@ -2,4 +2,4 @@
 *.png
 *.jpg
 !images/**
-.claude/settings.local.json
+.claude/
