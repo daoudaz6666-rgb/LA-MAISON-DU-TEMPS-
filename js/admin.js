@@ -109,7 +109,7 @@
 
   // ---------- Données affichées ----------
   const produits = () => [
-    ...etat.base.map((p) => ({ ...p, ...(etat.cat.modifs[p.id] || {}), ajoute: false })),
+    ...etat.base.map((p) => ({ ...p, ...(etat.cat.modifs[p.id] || {}), ajoute: false })).filter((p) => !p.supprime),
     ...etat.cat.ajouts.map((p) => ({ ...p, ajoute: true })),
   ];
 
@@ -147,7 +147,7 @@
           <label class="interrupteur"><input type="checkbox" class="masquer"${p.masque ? " checked" : ""}> Masquer du site</label>
           <div class="actions-produit">
             <button class="btn btn-ligne editer" type="button">✎ Nom, description…</button>
-            ${p.ajoute ? `<button class="btn btn-rouge supprimer" type="button">Supprimer</button>` : ""}
+            <button class="btn btn-rouge supprimer" type="button">Supprimer</button>
           </div>
         </div>
       </article>`).join("") : `<p class="vide">Aucun produit trouvé.</p>`;
@@ -238,11 +238,15 @@
     if (e.target.closest(".editer")) ouvrirFenetre(idDe(e.target));
     if (e.target.closest(".supprimer")) {
       const id = idDe(e.target);
-      const p = etat.cat.ajouts.find((x) => x.id === id);
-      if (!p || !confirm(`Supprimer « ${p.nom} » du site ?`)) return;
-      etat.cat.ajouts = etat.cat.ajouts.filter((x) => x.id !== id);
-      etat.modifies.add(id);
-      majBarre();
+      const p = produits().find((x) => x.id === id);
+      if (!p || !confirm(`Supprimer « ${p.nom} » du site ?\n(La suppression sera effective après « Publier sur le site ».)`)) return;
+      if (p.ajoute) {
+        etat.cat.ajouts = etat.cat.ajouts.filter((x) => x.id !== id);
+        etat.modifies.add(id);
+        majBarre();
+      } else {
+        modifier(id, { masque: true, supprime: true });
+      }
       afficher();
     }
   });
@@ -257,6 +261,14 @@
 
   const majGamme = () => { $("#champ-gamme").hidden = form.type.value !== "montre"; };
   form.type.addEventListener("change", majGamme);
+
+  // Quand on change la marque, la ligne « Marque : … » des caractéristiques suit
+  form.marque.addEventListener("input", () => {
+    const marque = form.marque.value.trim();
+    const lignes = form.details.value.split("\n").filter((l) => !/^\s*marque\s*:/i.test(l));
+    if (marque) lignes.unshift("Marque : " + marque);
+    form.details.value = lignes.join("\n").replace(/^\n+/, "");
+  });
 
   function ouvrirFenetre(id = null) {
     etat.edition = id;
@@ -273,6 +285,7 @@
       form.prix.value = formatPrix(p.prix);
       form.badge.value = p.badge || "";
       form.description.value = p.description || "";
+      form.details.value = (p.details || []).join("\n");
     }
     $("#apercu").hidden = !photoFenetre;
     $("#apercu").src = photoFenetre ? srcImage(photoFenetre) : "";
@@ -313,12 +326,13 @@
       image: photoFenetre,
       badge: form.badge.value.trim() || undefined,
       description: form.description.value.trim() || `${nom}, disponible en boutique à La Maison du Temps.`,
-      details: [marque && `Marque : ${marque}`, LIBELLES[type] + " " + LIBELLES[form.genre.value].toLowerCase(), "Disponible en boutique"].filter(Boolean),
+      details: form.details.value.split("\n").map((l) => l.trim()).filter(Boolean),
     };
+    if (!champs.details.length)
+      champs.details = [marque && `Marque : ${marque}`, LIBELLES[type] + " " + LIBELLES[form.genre.value].toLowerCase(), "Disponible en boutique"].filter(Boolean);
     const estAjout = etat.cat.ajouts.some((p) => p.id === etat.edition);
     if (etat.edition && !estAjout) {
-      // Produit d'origine : on garde ses détails, et une étiquette vidée est bien retirée du site
-      delete champs.details;
+      // Produit d'origine : une étiquette vidée est bien retirée du site
       champs.badge = champs.badge || "";
       const base = etat.base.find((p) => p.id === etat.edition);
       if (champs.image !== base.image) champs.illustration = false;
