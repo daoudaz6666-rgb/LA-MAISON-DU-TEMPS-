@@ -22,37 +22,47 @@
   const tel = BOUTIQUE.telephone.replace(/\s/g, "");
   // Le texte contient-il l'un des mots/expressions (mots entiers) ?
   const contient = (t, mots) => mots.some((m) => t.includes(` ${m} `));
-  const MARQUES_GENERIQUES = ["Junior", "Parfums"];
+
 
   // ---------- Vocabulaire ----------
   // Alias de chaque marque du catalogue (mots entiers, sans accents)
   const ALIAS = {
-    "Rolex": ["rolex", "submariner", "datejust"],
-    "Omega": ["omega", "seamaster"],
-    "Audemars Piguet": ["audemars", "piguet", "royal oak", "ap"],
-    "Patek Philippe": ["patek", "philippe", "nautilus"],
+    // Montres de prestige
+    "Patek Philippe": ["patek", "philippe", "patek philippe", "nautilus", "geneve", "calatrava"],
+    "Rolex": ["rolex", "submariner", "day date", "daydate", "president"],
+    "Audemars Piguet": ["audemars", "piguet", "royal oak", "ap", "squelette", "squeletton", "skeleton"],
+    "Cartier": ["cartier", "santos", "dumont", "santos dumont"],
+    "Omega": ["omega", "speedmaster"],
     "Richard Mille": ["richard mille", "richard", "rm"],
     "Hublot": ["hublot", "big bang"],
-    "Cartier": ["cartier", "santos"],
+    // Montres de marque
+    "Montblanc": ["montblanc", "mont blanc"],
+    "Hugo Boss": ["boss", "hugo boss", "hugo"],
+    "Emporio Armani": ["armani", "emporio armani", "emporio"],
     "Tissot": ["tissot", "prx"],
-    "Casio": ["casio", "edifice"],
-    "Boss": ["boss", "hugo boss", "hugo"],
-    "Lacoste": ["lacoste"],
-    "Tommy Hilfiger": ["tommy", "hilfiger", "tommy hilfiger"],
     "Daniel Wellington": ["daniel wellington", "wellington", "dw"],
-    "Curren": ["curren"],
+    "Casio": ["casio", "edifice", "g shock", "gshock"],
     "Poedagar": ["poedagar", "poedager", "poedaga"],
-    "Shenxi": ["shenxi"],
+    "Curren": ["curren"],
+    "Tomi": ["tomi"],
+    "Hanboro": ["hanboro"],
+    "Montre Duo": ["montre duo", "duo", "couple", "montres couple", "montre couple", "pour nous deux"],
+  };
+  // Gammes (comme sur l'affiche)
+  const GAMMES = {
+    prestige: ["prestige", "luxe", "haut de gamme", "haute horlogerie", "grande marque", "grandes marques"],
+    marque: ["montres de marque", "montre de marque", "abordable", "abordables", "petit prix", "pas cher", "moins cher", "economique"],
   };
   // Marques connues que la boutique n'a pas sur le site
-  const AUTRES_MARQUES = ["seiko", "citizen", "fossil", "michael kors", "mk", "guess", "armani", "emporio armani", "swatch",
+  const AUTRES_MARQUES = ["seiko", "citizen", "fossil", "michael kors", "mk", "guess", "swatch", "lacoste", "tommy", "tommy hilfiger", "shenxi",
     "breitling", "tag heuer", "longines", "apple watch", "samsung", "huawei", "invicta", "naviforce", "skmei", "festina",
     "chanel", "dior", "gucci", "versace", "ysl", "saint laurent", "lancome", "hermes", "prada", "paco rabanne",
-    "creed", "tom ford", "jean paul gaultier", "givenchy", "bvlgari", "bulgari", "montblanc", "calvin klein", "azzaro",
+    "creed", "tom ford", "jean paul gaultier", "givenchy", "bvlgari", "bulgari", "calvin klein", "azzaro",
     "carolina herrera", "boucheron", "kenzo", "lattafa", "rasasi", "ajmal", "oud"];
   const GENRES = {
     homme: ["homme", "hommes", "monsieur", "messieurs", "mari", "papa", "pere", "pour lui", "masculin", "masculine", "copain", "fiance", "frere", "mec", "gars"],
     femme: ["femme", "femmes", "dame", "dames", "madame", "epouse", "maman", "mere", "pour elle", "feminin", "feminine", "copine", "fiancee", "soeur", "cherie"],
+    mixte: ["mixte", "unisexe", "unisex", "pour les deux"],
     enfant: ["enfant", "enfants", "fils", "fille", "garcon", "bebe", "ado", "ados", "adolescent", "adolescente", "junior", "kid", "kids", "gamin", "gamins"],
   };
   const TYPES = {
@@ -66,7 +76,7 @@
     horaires: ["horaire", "horaires", "heure", "heures", "ouvert", "ouverte", "ouverture", "ferme", "fermeture", "dimanche", "aujourd hui"],
     adresse: ["adresse", "situe", "situee", "localisation", "localiser", "itineraire", "plan", "maps", "venir", "trouver la boutique", "ou etes vous", "ou se trouve", "magasin", "boutique physique", "quartier",
       "et ou", "ou est", "c est ou", "ou etes", "ou vous trouver", "ou se situe", "ou vous etes", "vous etes ou"],
-    contact: ["telephone", "tel", "numero", "appeler", "appel", "contact", "contacter", "joindre", "whatsapp", "wa"],
+    contact: ["telephone", "tel", "numero", "appeler", "appel", "contact", "contacter", "joindre", "whatsapp", "wa", "snap", "snapchat", "reseaux", "reseaux sociaux"],
     livraison: ["livraison", "livrer", "livrez", "livre", "expedition", "expedier", "envoyer", "envoi"],
     paiement: ["paiement", "payer", "paye", "orange money", "moov", "moov money", "mobile money", "especes", "carte bancaire"],
     prix: ["prix", "combien", "cout", "coute", "coutent", "tarif", "tarifs", "cher", "budget", "fcfa", "francs", "moins cher", "pas cher"],
@@ -83,17 +93,20 @@
     const autresMarques = AUTRES_MARQUES.filter((m) => contient(t, [m]));
     const genre = Object.keys(GENRES).find((g) => contient(t, GENRES[g])) || "";
     const type = Object.keys(TYPES).find((k) => contient(t, TYPES[k])) || "";
+    const gamme = Object.keys(GAMMES).find((k) => contient(t, GAMMES[k])) || "";
     const intentions = Object.keys(INTENTIONS).filter((k) => contient(t, INTENTIONS[k]));
     // Recherche directe d'un produit par un mot distinctif de son nom (ex. « submariner », « boisé »)
     const produitsNommes = PRODUITS.filter((p) => norm(p.nom).trim().split(" ")
-      .filter((w) => w.length >= 4 && !["montre", "parfum", "homme", "femme", "enfant"].includes(w))
+      .filter((w) => w.length >= 4 && !["montre", "parfum", "homme", "femme", "enfant"].includes(w) && !norm(p.marque || "").includes(` ${w} `))
       .some((w) => t.includes(` ${w} `)));
     const nbMots = t.trim().split(" ").length;
-    return { t, marques, autresMarques, genre, type, intentions, produitsNommes, nbMots };
+    return { t, marques, autresMarques, genre, type, gamme, intentions, produitsNommes, nbMots };
   }
 
   // ---------- Mémoire de conversation (pour « et pour femme ? », « combien ? ») ----------
-  const contexte = { type: "", genre: "", marques: [], produits: [] };
+  const contexte = { type: "", genre: "", gamme: "", marques: [], produits: [] };
+  // Un article « mixte » convient aussi pour homme et pour femme
+  const genreOk = (p, g) => !g || p.genre === g || (p.genre === "mixte" && (g === "homme" || g === "femme"));
 
   // ---------- Construction des réponses ----------
   const carteProduit = (p) => `
@@ -103,19 +116,22 @@
     </a>`;
   const bouton = (libelle, href, externe = false) =>
     `<a class="ia-btn" href="${href}" ${externe ? 'target="_blank" rel="noopener"' : "data-ia-lien"}>${esc(libelle)}</a>`;
-  const lienBoutique = ({ type, genre, marque }) => {
+  const lienBoutique = ({ type, genre, marque, gamme }) => {
     const p = new URLSearchParams();
     if (type) p.set("type", type);
     if (genre) p.set("genre", genre);
+    if (gamme) p.set("gamme", gamme);
     if (marque) p.set("marque", marque);
     const s = p.toString();
     return `#/boutique${s ? "?" + s : ""}`;
   };
   const listeMarques = () => Object.keys(ALIAS).filter((m) => PRODUITS.some((p) => p.marque === m));
   const libelleType = { montre: "montres", parfum: "parfums", bracelet: "bracelets" };
-  const libelleGenre = { homme: "pour homme", femme: "pour femme", enfant: "pour enfant" };
+  const libelleGenre = { homme: "pour homme", femme: "pour femme", mixte: "pour couple / mixtes", enfant: "pour enfant" };
+  const libelleGamme = { prestige: "de prestige", marque: "de marque" };
+  const marquesGamme = (g) => listeMarques().filter((m) => PRODUITS.some((p) => p.marque === m && p.gamme === g));
 
-  const SUGGESTIONS = ["Avez-vous des Rolex ?", "Montres pour femme", "Parfums homme", "Une idée cadeau", "Horaires et adresse"];
+  const SUGGESTIONS = ["Avez-vous des Rolex ?", "Montres de prestige", "Montres pour femme", "Parfums homme", "Une idée cadeau", "Horaires et adresse"];
   const refus = () => ({
     html: `Désolé, je suis l'assistant de <strong>${esc(BOUTIQUE.nom)}</strong> : je réponds uniquement aux questions sur les <strong>montres et parfums</strong> disponibles sur notre site (marques, modèles, prix, idées cadeaux) et sur la boutique. 🙂`,
     suggestions: SUGGESTIONS,
@@ -129,7 +145,7 @@
     // 1) Infos pratiques sur la boutique
     if (i("horaires")) parties.push(`🕗 <strong>Horaires :</strong> ${esc(BOUTIQUE.horaires)}.`);
     if (i("adresse")) parties.push(`📍 <strong>Adresse :</strong> ${esc(BOUTIQUE.adresse)} (${esc(BOUTIQUE.boitePostale)}).<br>${bouton("Itinéraire Google Maps", BOUTIQUE.carte, true)}`);
-    if (i("contact")) parties.push(`📞 <strong>Téléphone / WhatsApp :</strong> <a href="tel:${tel}">${esc(BOUTIQUE.telephone)}</a><br>${bouton("Écrire sur WhatsApp", lienWa("Bonjour La Maison du Temps !"), true)}`);
+    if (i("contact")) parties.push(`📞 <strong>Téléphone / WhatsApp :</strong> <a href="tel:${tel}">${esc(BOUTIQUE.telephone)}</a>${BOUTIQUE.snapchat ? `<br>👻 <strong>Snapchat :</strong> ${esc(BOUTIQUE.snapchat.toUpperCase())}` : ""}<br>${bouton("Écrire sur WhatsApp", lienWa("Bonjour La Maison du Temps !"), true)}`);
     if (i("livraison")) parties.push(`🚚 Pour la livraison (délais, zones, frais), le plus simple est de nous écrire sur WhatsApp au ${esc(BOUTIQUE.telephone)} : nous vous répondons rapidement.`);
     if (i("paiement")) parties.push(`💳 Pour les moyens de paiement acceptés, contactez-nous sur WhatsApp au ${esc(BOUTIQUE.telephone)} ou passez en boutique.`);
     if (i("authenticite")) parties.push(`ℹ️ Pour toute question sur l'origine, les papiers ou la garantie d'un modèle précis, contactez directement la boutique : l'équipe vous répondra pour chaque pièce.<br>${bouton("Poser la question sur WhatsApp", lienWa("Bonjour, j'ai une question sur la garantie d'un modèle."), true)}`);
@@ -143,32 +159,38 @@
 
     // 3) Liste des marques
     if (i("marques") && !a.marques.length && !a.autresMarques.length) {
-      parties.push(`Voici les marques disponibles sur notre site : <div class="ia-chips">${listeMarques().map((m) => `<a href="${lienBoutique({ marque: m })}" data-ia-lien>${esc(m)}</a>`).join("")}</div>Nous avons aussi des <a href="#/boutique?type=parfum" data-ia-lien>parfums</a> pour homme, femme et enfant.`);
+      const puces = (liste) => `<div class="ia-chips">${liste.map((m) => `<a href="${lienBoutique({ marque: m })}" data-ia-lien>${esc(m)}</a>`).join("")}</div>`;
+      parties.push(`Voici nos marques :<br><strong>Montres de prestige</strong>${puces(marquesGamme("prestige"))}<br><strong>Montres de marque</strong>${puces(marquesGamme("marque"))}<br>Nous avons aussi des <a href="#/boutique?type=parfum" data-ia-lien>parfums</a> et des <a href="#/boutique?type=bracelet" data-ia-lien>bracelets</a>.`);
     }
 
     // 4) Recherche de produits
     let type = a.type;
     let genre = a.genre;
     let marques = a.marques;
+    let gamme = a.gamme;
     const suite = !type && !marques.length && !a.produitsNommes.length && !i("cadeau") && (genre || i("prix"));
     if (suite && contexte.type) type = contexte.type;            // « et pour femme ? »
     if (suite && !genre && contexte.genre) genre = contexte.genre;
     if (suite && !marques.length && contexte.marques.length && !a.genre) marques = contexte.marques;
 
-    const chercheProduits = a.produitsNommes.length || marques.length || type ||
+    if (gamme && !type) type = "montre";
+    const chercheProduits = a.produitsNommes.length || marques.length || type || gamme ||
       i("catalogue") || i("cadeau") || i("prix") || (genre && a.nbMots <= 6);
 
     if (chercheProduits) {
       let liste;
-      if (a.produitsNommes.length && !marques.length) liste = a.produitsNommes;
+      // Un modèle précis (« Day-Date », « squelette »…) l'emporte sur la marque entière
+      const precis = a.produitsNommes.filter((p) => !marques.length || marques.includes(p.marque));
+      if (precis.length) liste = precis;
       else liste = PRODUITS.filter((p) =>
         (!marques.length || marques.includes(p.marque)) &&
         (!type || p.type === type) &&
-        (!genre || p.genre === genre));
+        (!gamme || p.gamme === gamme) &&
+        genreOk(p, genre));
 
       // Idée cadeau sans précision : un mélange montres + parfums
       if (i("cadeau") && !type && !marques.length) {
-        const pool = PRODUITS.filter((p) => !genre || p.genre === genre);
+        const pool = PRODUITS.filter((p) => genreOk(p, genre));
         liste = [...pool.filter((p) => p.type === "montre").slice(0, 3), ...pool.filter((p) => p.type !== "montre").slice(0, 2)];
       }
       // « combien ? » juste après une réponse : on reprend les produits montrés
@@ -178,7 +200,7 @@
       if (liste.length) {
         const total = liste.length;
         const montres = liste.slice(0, 6);
-        const desc = [type ? libelleType[type] : "articles", genre ? libelleGenre[genre] : "", marques.length ? marques.join(" / ") : ""]
+        const desc = [type ? libelleType[type] : "articles", gamme ? libelleGamme[gamme] : "", genre ? libelleGenre[genre] : "", marques.length ? marques.join(" / ") : ""]
           .filter(Boolean).join(" ");
         let intro;
         if (suitePrix) intro = `Voici les prix de ${total > 1 ? "ces articles" : "cet article"} :`;
@@ -195,14 +217,14 @@
             : sansPrix ? `<p class="ia-note">Certains prix sont communiqués sur demande via WhatsApp.</p>` : "";
         }
         const voirTout = total > montres.length || marques.length || type || genre
-          ? bouton(total > montres.length ? `Voir les ${total} articles` : "Voir dans la boutique", lienBoutique({ type, genre, marque: marques.length === 1 ? marques[0] : "" }))
+          ? bouton(total > montres.length ? `Voir les ${total} articles` : "Voir dans la boutique", lienBoutique({ type, genre, gamme, marque: marques.length === 1 ? marques[0] : "" }))
           : "";
         const waTxt = montres.length === 1
           ? `Bonjour, je suis intéressé(e) par « ${montres[0].nom} ». Pouvez-vous m'indiquer le prix et la disponibilité ?`
           : `Bonjour, je souhaite des informations sur vos ${desc}.`;
         parties.push(`${intro}<div class="ia-produits">${montres.map(carteProduit).join("")}</div>${note}<div class="ia-actions">${voirTout}${bouton("Demander sur WhatsApp", lienWa(waTxt), true)}</div>`);
 
-        contexte.type = type; contexte.genre = genre; contexte.marques = marques; contexte.produits = montres;
+        contexte.type = type; contexte.genre = genre; contexte.gamme = gamme; contexte.marques = marques; contexte.produits = montres;
       } else if (!a.autresMarques.length) {
         parties.push(`Je n'ai pas trouvé d'article correspondant sur le site${genre ? " " + libelleGenre[genre] : ""}. Nous avons peut-être d'autres modèles en boutique : demandez-nous !<br>${bouton("Demander sur WhatsApp", lienWa(`Bonjour, je cherche : ${texte}`), true)}`);
       }

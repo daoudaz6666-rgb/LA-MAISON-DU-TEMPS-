@@ -59,56 +59,68 @@
     return `<div class="etoiles">${"★".repeat(pleines)}${"☆".repeat(5 - pleines)}<small>${note.toFixed(1)}</small></div>`;
   };
 
-  // ---------- Logo LMT (dessiné en SVG) ----------
+  // ---------- Logo MT (dessiné en SVG, d'après l'affiche officielle) ----------
   let logoN = 0;
+  const OR_DEGRADE = (id) => `
+    <linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f7e3a1"/><stop offset=".35" stop-color="#d9ad48"/>
+      <stop offset=".6" stop-color="#f3d888"/><stop offset="1" stop-color="#a5741c"/>
+    </linearGradient>`;
   function monogramme() {
     const g = `or-${++logoN}`;
-    // Cadran d'horloge : 12 graduations
-    const graduations = Array.from({ length: 12 }, (_, i) => {
-      const a = (i * 30 * Math.PI) / 180;
-      const r1 = i % 3 === 0 ? 17 : 19.5;
-      return `<line x1="${(84 + Math.sin(a) * r1).toFixed(1)}" y1="${(30 - Math.cos(a) * r1).toFixed(1)}" x2="${(84 + Math.sin(a) * 22).toFixed(1)}" y2="${(30 - Math.cos(a) * 22).toFixed(1)}" stroke-width="${i % 3 === 0 ? 2 : 1}"/>`;
+    // Arc de cadran : de -25° à 165° (0° = midi), centre (66,50), rayon 44
+    const cx = 66, cy = 50, r = 44;
+    const pt = (deg, rr = r) => {
+      const a = (deg * Math.PI) / 180;
+      return [(cx + Math.sin(a) * rr).toFixed(1), (cy - Math.cos(a) * rr).toFixed(1)];
+    };
+    const [x1, y1] = pt(-25), [x2, y2] = pt(165);
+    const graduations = [0, 30, 60, 90, 120, 150].map((d) => {
+      const [ax, ay] = pt(d, d % 90 === 0 ? 34 : 37), [bx, by] = pt(d, 40.5);
+      return `<line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" stroke-width="${d % 90 === 0 ? 3 : 2.2}"/>`;
     }).join("");
     return `
-      <svg class="logo-mono" viewBox="0 0 120 96" aria-hidden="true">
-        <defs>
-          <linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#f6e08e"/><stop offset=".45" stop-color="#d4a93a"/>
-            <stop offset=".7" stop-color="#f1d77a"/><stop offset="1" stop-color="#a87a1f"/>
-          </linearGradient>
-        </defs>
+      <svg class="logo-mono" viewBox="0 0 124 108" aria-hidden="true">
+        <defs>${OR_DEGRADE(g)}</defs>
         <g stroke="url(#${g})" fill="none" stroke-linecap="round">
-          <circle cx="84" cy="30" r="25" stroke-width="2.2"/>
+          <path d="M${x1} ${y1} A${r} ${r} 0 1 1 ${x2} ${y2}" stroke-width="2.6"/>
           ${graduations}
-          <path d="M84 30 L84 15 M84 30 L95 37" stroke-width="2.4"/>
         </g>
-        <circle cx="84" cy="30" r="2.4" fill="url(#${g})"/>
-        <text x="4" y="78" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="70" fill="url(#${g})">L</text>
-        <text x="38" y="78" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="46" fill="url(#${g})">MT</text>
-        <path d="M6 86 C 40 96, 80 96, 112 82" stroke="url(#${g})" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <rect x="${cx + r + 1}" y="${cy - 6}" width="6" height="12" rx="1.5" fill="url(#${g})"/>
+        <text x="2" y="80" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="76" fill="url(#${g})">M</text>
+        <text x="47" y="99" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="94" fill="url(#${g})">T</text>
       </svg>`;
   }
   const logo = () => `
     <a href="#/" class="logo" aria-label="${BOUTIQUE.nom} — accueil">
       ${monogramme()}
       <span class="logo-texte">
-        <span class="logo-script">La Maison</span>
-        <span class="logo-du">DU TEMPS</span>
+        <span class="logo-la">LA</span>
+        <span class="logo-nom">MAISON DU TEMPS</span>
+        <span class="logo-devise">${esc(BOUTIQUE.slogan)}</span>
       </span>
     </a>`;
 
   // Icône de l'onglet du navigateur (favicon) générée en JavaScript
   function installerFavicon() {
-    const svgFav = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#0f0e0d"/><rect x="3" y="3" width="58" height="58" rx="10" fill="none" stroke="#d4a93a" stroke-width="2"/><text x="32" y="43" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="26" fill="#e9c860">LMT</text></svg>`;
+    const svgFav = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs>${OR_DEGRADE("f")}</defs><rect width="64" height="64" rx="12" fill="#0f0e0d"/><path d="M22 9 A25 25 0 1 1 18 52" fill="none" stroke="url(#f)" stroke-width="2.5" stroke-linecap="round"/><text x="7" y="44" font-family="Georgia,serif" font-weight="700" font-size="30" fill="url(#f)">M</text><text x="31" y="52" font-family="Georgia,serif" font-weight="700" font-size="36" fill="url(#f)">T</text></svg>`;
     const lien = document.createElement("link");
     lien.rel = "icon";
     lien.href = "data:image/svg+xml," + encodeURIComponent(svgFav);
     document.head.appendChild(lien);
   }
 
+  // Une « vraie » marque (et non une catégorie générique comme « Parfums »)
+  const vraieMarque = (m) => Boolean(m) && !["Junior", "Parfums", "Bracelets"].includes(m);
+
   // ---------- Menus déroulants ----------
-  const marquesDe = (type) => [...new Set(PRODUITS.filter((p) => p.type === type && p.marque && p.marque !== "Junior").map((p) => p.marque))]
+  const marquesDe = (type) => [...new Set(PRODUITS.filter((p) => p.type === type && vraieMarque(p.marque)).map((p) => p.marque))]
     .sort((a, b) => a.localeCompare(b));
+  // Marques d'une gamme, dans l'ordre de l'affiche
+  const marquesGamme = (gamme) => [...new Set(PRODUITS.filter((p) => p.type === "montre" && p.gamme === gamme && vraieMarque(p.marque)).map((p) => p.marque))];
+  // Un produit « mixte » apparaît aussi dans les sélections homme et femme
+  const genreOk = (p, g) => !g || p.genre === g || (p.genre === "mixte" && (g === "homme" || g === "femme"));
+  const libelleGenre = (g) => ({ homme: "Homme", femme: "Femme", mixte: "Homme & Femme", enfant: "Enfant" }[g] || cap(g));
   const menuDeroulant = (cle, libelle, groupes) => `
     <div class="nav-item">
       <button class="dd-btn" data-action="dropdown" data-nav="${cle}" aria-expanded="false" aria-haspopup="true">
@@ -147,10 +159,12 @@
                 ["#/boutique?type=montre", "Toutes les montres"],
                 ["#/boutique?type=montre&genre=homme", "Montres homme"],
                 ["#/boutique?type=montre&genre=femme", "Montres femme"],
-                ["#/boutique?type=montre&genre=enfant", "Montres enfant"],
+                ["#/boutique?type=montre&gamme=prestige", "Montres de prestige"],
+                ["#/boutique?type=montre&gamme=marque", "Montres de marque"],
                 ["#/boutique?type=bracelet", "Bracelets"],
               ] },
-              { titre: "Marques", classe: "dd-marques", liens: marquesDe("montre").map((m) => [`#/boutique?marque=${encodeURIComponent(m)}`, m]) },
+              { titre: "Montres de prestige", liens: marquesGamme("prestige").map((m) => [`#/boutique?marque=${encodeURIComponent(m)}`, m]) },
+              { titre: "Montres de marque", liens: marquesGamme("marque").map((m) => [`#/boutique?marque=${encodeURIComponent(m)}`, m]) },
             ])}
             ${menuDeroulant("parfum", "Parfums", [
               { titre: "Pour qui ?", liens: [
@@ -210,6 +224,7 @@
                 <li><a href="tel:${BOUTIQUE.telephone.replace(/\s/g, "")}">${BOUTIQUE.telephone}</a></li>
                 <li><a href="mailto:${BOUTIQUE.email}">${BOUTIQUE.email}</a></li>
                 <li><a href="https://wa.me/${BOUTIQUE.whatsapp}" target="_blank" rel="noopener">WhatsApp</a></li>
+                ${BOUTIQUE.snapchat ? `<li><a href="https://www.snapchat.com/add/${encodeURIComponent(BOUTIQUE.snapchat)}" target="_blank" rel="noopener">Snapchat : ${esc(BOUTIQUE.snapchat.toUpperCase())}</a></li>` : ""}
               </ul>
             </div>
           </div>
@@ -272,7 +287,7 @@
           ${action}
         </div>
         <div class="carte-info">
-          <span class="carte-cat">${esc(p.marque && p.marque !== "Junior" && p.marque !== "Parfums" ? p.marque : libelleType(p.type))} · ${cap(p.genre)}</span>
+          <span class="carte-cat">${esc(vraieMarque(p.marque) ? p.marque : libelleType(p.type))} · ${libelleGenre(p.genre)}</span>
           <h3 class="carte-nom" data-action="voir" data-id="${p.id}">${esc(p.nom)}</h3>
           <div class="prix">${prixHTML(p)}</div>
         </div>
@@ -289,15 +304,15 @@
       .slice(0, 8);
 
     // Marques présentes dans le catalogue (hors catégories génériques)
-    const MARQUES = [...new Set(PRODUITS.filter((p) => p.type !== "parfum" && p.marque && p.marque !== "Junior").map((p) => p.marque))];
+    const MARQUES = [...new Set(PRODUITS.filter((p) => p.type === "montre" && vraieMarque(p.marque)).map((p) => p.marque))];
 
     $("#page").innerHTML = `
       <section class="hero">
         <div class="hero-bg" style="background-image:url('${IMAGES.hero}')"></div>
         <div class="container"><div class="hero-contenu">
-          <span class="sur-titre">L'art du temps · Ouagadougou</span>
+          <span class="sur-titre">${esc(BOUTIQUE.slogan)} · Ouagadougou</span>
           <h1>Le temps a son <em>élégance</em>, le parfum sa signature.</h1>
-          <p>Rolex, Omega, Cartier, Audemars Piguet, Hublot, Tissot, Casio, Lacoste… et nos parfums pour homme, femme et enfant.</p>
+          <p>Patek Philippe, Rolex, Audemars Piguet, Cartier, Omega, Richard Mille, Hublot, Montblanc… nos montres, parfums et bracelets.</p>
           <div class="hero-btns">
             <a href="#/boutique?type=montre" class="btn btn-or">Nos montres ${ICONES.fleche}</a>
             <a href="#/boutique?type=parfum" class="btn btn-contour">Nos parfums</a>
@@ -318,13 +333,17 @@
         <div class="container">
           <div class="section-tete">
             <span class="sur-titre">Nos collections</span>
-            <h2>Pour chacun, son style</h2>
+            <h2>Montres, parfums &amp; bracelets</h2>
           </div>
           <div class="genres">
-            ${["homme", "femme", "enfant"].map((g) => `
-              <a href="#/boutique?genre=${g}" class="genre-carte">
-                <img src="${IMAGES[g]}" alt="Collection ${g}" loading="lazy">
-                <div><h3>${cap(g)}</h3><span>${nb("genre", g)} articles ${ICONES.fleche}</span></div>
+            ${[
+              { titre: "Montres de prestige", lien: "#/boutique?type=montre&gamme=prestige", image: BANNER("1594534475808-b18fc33b045e", 1000), n: PRODUITS.filter((p) => p.gamme === "prestige").length },
+              { titre: "Montres de marque", lien: "#/boutique?type=montre&gamme=marque", image: IMAGES.homme, n: PRODUITS.filter((p) => p.gamme === "marque").length },
+              { titre: "Bracelets", lien: "#/boutique?type=bracelet", image: IMAGES.bracelets, sous: "Style & raffinement" },
+            ].map((c) => `
+              <a href="${c.lien}" class="genre-carte">
+                <img src="${c.image}" alt="${c.titre}" loading="lazy">
+                <div><h3>${c.titre}</h3><span>${c.n ? `${c.n} modèles` : c.sous} ${ICONES.fleche}</span></div>
               </a>`).join("")}
           </div>
         </div>
@@ -351,7 +370,7 @@
         <div class="container duo">
           <a href="#/boutique?type=montre" class="duo-carte">
             <img src="${IMAGES.montres}" alt="Montres" loading="lazy">
-            <div><span class="sur-titre">${nb("type", "montre")} modèles</span><h3>L'art de l'horlogerie</h3><p>Rolex, Omega, Cartier, Hublot, Tissot, Casio…</p><span class="btn btn-contour">Découvrir</span></div>
+            <div><span class="sur-titre">${nb("type", "montre")} modèles</span><h3>L'art de l'horlogerie</h3><p>Prestige : Patek Philippe, Rolex, Cartier… Marque : Montblanc, Hugo Boss, Tissot…</p><span class="btn btn-contour">Découvrir</span></div>
           </a>
           <a href="#/boutique?type=parfum" class="duo-carte">
             <img src="${IMAGES.parfums}" alt="Parfums" loading="lazy">
@@ -442,6 +461,7 @@
       type: params.get("type") || "",
       genre: params.get("genre") || "",
       marque: params.get("marque") || "",
+      gamme: params.get("gamme") || "",
       q: (params.get("q") || "").trim(),
       tri: params.get("tri") || "pertinence",
       max: Number(params.get("max")) || 0,
@@ -456,7 +476,8 @@
     const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
     let liste = PRODUITS.filter((p) =>
       (!f.type || p.type === f.type) &&
-      (!f.genre || p.genre === f.genre) &&
+      genreOk(p, f.genre) &&
+      (!f.gamme || p.gamme === f.gamme) &&
       (!f.marque || p.marque === f.marque) &&
       (!f.favoris || etat.favoris.includes(p.id)) &&
       (!f.promo || p.ancienPrix) &&
@@ -478,6 +499,7 @@
     else if (f.promo) titre = "Promotions";
     else if (f.q) titre = `Recherche : « ${esc(f.q)} »`;
     else if (f.marque) titre = esc(f.marque);
+    else if (f.gamme) titre = f.gamme === "prestige" ? "Montres de prestige" : "Montres de marque";
     else if (f.type && f.genre) titre = `${TYPES[f.type] || cap(f.type)} · ${cap(f.genre)}`;
     else if (f.type) titre = TYPES[f.type] || cap(f.type);
     else if (f.genre) titre = `Collection ${cap(f.genre)}`;
@@ -493,7 +515,10 @@
     };
     // Nombre de produits pour une option, en tenant compte des autres filtres actifs
     const compte = (cle, val) => PRODUITS.filter((p) =>
-      ["type", "genre", "marque"].every((k) => k === cle ? (!val || p[k] === val) : (!f[k] || p[k] === f[k]))).length;
+      ["type", "genre", "gamme", "marque"].every((k) => {
+        const v = k === cle ? val : f[k];
+        return k === "genre" ? genreOk(p, v) : (!v || p[k] === v);
+      })).length;
 
     // Chaque filtre est une liste déroulante ; les options vides (0 article) sont désactivées
     const groupe = (titreG, cle, options) => `
@@ -508,9 +533,9 @@
           </select>
         </div>
       </div>`;
-    const filtresActifs = ["type", "genre", "marque", "max"].some((k) => params.get(k));
+    const filtresActifs = ["type", "genre", "gamme", "marque", "max"].some((k) => params.get(k));
     const marques = [...new Set(PRODUITS.map((p) => p.marque).filter(Boolean))]
-      .filter((m) => m !== "Junior" && m !== "Parfums")
+      .filter(vraieMarque)
       .sort((a, b) => a.localeCompare(b));
 
     $("#page").innerHTML = `
@@ -524,7 +549,8 @@
       <div class="container boutique">
         <aside class="filtres" id="filtres">
           ${groupe("Catégorie", "type", [["", "Tout"], ["montre", "Montres"], ["parfum", "Parfums"], ["bracelet", "Bracelets"]])}
-          ${groupe("Pour qui ?", "genre", [["", "Tous"], ["homme", "Homme"], ["femme", "Femme"], ["enfant", "Enfant"]])}
+          ${groupe("Pour qui ?", "genre", [["", "Tous"], ["homme", "Homme"], ["femme", "Femme"], ["mixte", "Couple / Mixte"], ["enfant", "Enfant"]])}
+          ${groupe("Gamme", "gamme", [["", "Toutes"], ["prestige", "Prestige"], ["marque", "De marque"]])}
           ${groupe("Marques", "marque", [["", "Toutes"], ...marques.map((m) => [m, esc(m)])])}
           ${prixConnus.length > 1 ? `
           <div class="filtre-groupe prix-range">
@@ -586,7 +612,7 @@
             ${p.illustration ? `<span class="illus">Photo d'illustration — demandez-nous les photos du modèle réel</span>` : ""}
           </div>
           <div class="fiche-info">
-            <span class="carte-cat">${libelleType(p.type)} · ${cap(p.genre)}${p.marque && p.marque !== "Junior" && p.marque !== "Parfums" ? " · " + esc(p.marque) : ""}</span>
+            <span class="carte-cat">${libelleType(p.type)} · ${libelleGenre(p.genre)}${vraieMarque(p.marque) ? " · " + esc(p.marque) : ""}</span>
             <h1>${esc(p.nom)}</h1>
             <div class="prix">${prixHTML(p)}${economie ? `<span class="badge" style="position:static">-${economie}%</span>` : ""}</div>
             <p class="desc">${esc(p.description)}</p>
@@ -717,7 +743,7 @@
   // ---------- Page : Qui sommes-nous ----------
   function pageAPropos() {
     const A = A_PROPOS;
-    const marques = [...new Set(PRODUITS.map((p) => p.marque).filter((m) => m && m !== "Junior" && m !== "Parfums"))];
+    const marques = [...new Set(PRODUITS.filter((p) => p.type === "montre").map((p) => p.marque).filter(vraieMarque))];
     const telLien = BOUTIQUE.telephone.replace(/\s/g, "");
     $("#page").innerHTML = `
       <section class="page-tete">
@@ -825,7 +851,7 @@
           <img src="${p.image.replace("w=800&h=800", "w=200&h=200")}" alt="${esc(p.nom)}">
           <div>
             <h4>${esc(p.nom)}</h4>
-            <small>${cap(p.type)} · ${cap(p.genre)}</small>
+            <small>${cap(p.type)} · ${libelleGenre(p.genre)}</small>
             <div class="qte">
               <button data-action="qte" data-id="${p.id}" data-d="-1" aria-label="Moins">−</button>
               <span>${l.qte}</span>

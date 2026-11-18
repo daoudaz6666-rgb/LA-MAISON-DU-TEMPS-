@@ -765,3 +765,47 @@ body, button, input, select, textarea { font-family: var(--sans); }
   .valeur-icone { width: 48px; height: 48px; margin-bottom: 0; grid-row: span 2; }
   .apropos-contact .hero-btns .btn { flex: 1 1 100%; }
 }
+
+/* =========================================================
+   Nouveau logo MT (affiche officielle)
+   ========================================================= */
+.logo { flex-direction: row; align-items: center; gap: 12px; }
+.logo-mono { width: 64px; height: 56px; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .5)); }
+.logo-texte { display: flex; flex-direction: column; align-items: center; line-height: 1; white-space: nowrap; }
+.logo-la, .logo-nom, .logo-devise { font-family: "Cinzel", "Cormorant Garamond", Georgia, serif;
+  background: var(--or-degrade); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.logo-la { display: flex; align-items: center; gap: 8px; font-size: .66rem; font-weight: 600; letter-spacing: .32em; padding-left: .32em; }
+.logo-la::before, .logo-la::after { content: ""; width: 34px; height: 1px; background: var(--or-degrade); }
+.logo-nom { font-size: 1.28rem; font-weight: 600; letter-spacing: .06em; margin: 3px 0 4px; }
+.logo-devise { display: flex; align-items: center; gap: 6px; font-size: .46rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+.logo-devise::before, .logo-devise::after { content: ""; width: 14px; height: 1px; background: var(--or-degrade); }
+
+@media (min-width: 821px) and (max-width: 1100px) {
+  .logo-mono { width: 54px; height: 48px; }
+  .logo-nom { font-size: 1.05rem; }
+  .logo-la::before, .logo-la::after { width: 26px; }
+}
+@media (max-width: 560px) {
+  .logo { gap: 6px; }
+  .logo-mono { width: 42px; height: 37px; }
+  .logo-la { font-size: .46rem; gap: 5px; }
+  .logo-la::before, .logo-la::after { width: 18px; }
+  .logo-nom { font-size: .84rem; margin: 2px 0 0; letter-spacing: .04em; }
+  .logo-devise { display: none; }
+}
+@media (max-width: 360px) {
+  .logo-mono { width: 36px; height: 32px; }
+  .logo-nom { font-size: .74rem; }
+}
+/* Pied de page : logo un peu plus grand */
+.footer .logo-mono { width: 74px; height: 64px; }
+.footer .logo-nom { font-size: 1.4rem; }
+
+/* Filtres boutique : 4 listes (catégorie, pour qui, gamme, marques) */
+@media (max-width: 1000px) {
+  .filtres { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 700px) {
+  .filtres { grid-template-columns: 1fr 1fr; }
+  .filtres .filtre-marque { grid-column: auto; }
+}
