@@ -3,7 +3,9 @@
 window.CATALOGUE_ADMIN = {
  "modifs": {
   "1": {
-   "prix": 75000
+   "prix": 15000,
+   "image": "images/produits/patek-philippe-geneve-mwmk4sgf0.jpg",
+   "illustration": false
   }
  },
  "ajouts": []
