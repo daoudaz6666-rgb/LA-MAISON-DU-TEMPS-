@@ -1,0 +1,5 @@
+﻿# Fichiers locaux qui ne doivent pas aller sur GitHub
+*.png
+*.jpg
+!images/**
+.claude/settings.local.json

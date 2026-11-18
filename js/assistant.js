@@ -145,9 +145,9 @@
     // 1) Infos pratiques sur la boutique
     if (i("horaires")) parties.push(`🕗 <strong>Horaires :</strong> ${esc(BOUTIQUE.horaires)}.`);
     if (i("adresse")) parties.push(`📍 <strong>Adresse :</strong> ${esc(BOUTIQUE.adresse)} (${esc(BOUTIQUE.boitePostale)}).<br>${bouton("Itinéraire Google Maps", BOUTIQUE.carte, true)}`);
-    if (i("contact")) parties.push(`📞 <strong>Téléphone / WhatsApp :</strong> <a href="tel:${tel}">${esc(BOUTIQUE.telephone)}</a>${BOUTIQUE.snapchat ? `<br>👻 <strong>Snapchat :</strong> ${esc(BOUTIQUE.snapchat.toUpperCase())}` : ""}<br>${bouton("Écrire sur WhatsApp", lienWa("Bonjour La Maison du Temps !"), true)}`);
-    if (i("livraison")) parties.push(`🚚 Pour la livraison (délais, zones, frais), le plus simple est de nous écrire sur WhatsApp au ${esc(BOUTIQUE.telephone)} : nous vous répondons rapidement.`);
-    if (i("paiement")) parties.push(`💳 Pour les moyens de paiement acceptés, contactez-nous sur WhatsApp au ${esc(BOUTIQUE.telephone)} ou passez en boutique.`);
+    if (i("contact")) parties.push(`📞 <strong>Téléphone :</strong> <a href="tel:${tel}">${esc(BOUTIQUE.telephone)}</a><br>💬 <strong>WhatsApp :</strong> ${esc(BOUTIQUE.whatsappAffiche)}${BOUTIQUE.snapchat ? `<br>👻 <strong>Snapchat :</strong> ${esc(BOUTIQUE.snapchat.toUpperCase())}` : ""}<br>${bouton("Écrire sur WhatsApp", lienWa("Bonjour La Maison du Temps !"), true)}`);
+    if (i("livraison")) parties.push(`🚚 Pour la livraison (délais, zones, frais), le plus simple est de nous écrire sur WhatsApp au ${esc(BOUTIQUE.whatsappAffiche)} : nous vous répondons rapidement.`);
+    if (i("paiement")) parties.push(`💳 Pour les moyens de paiement acceptés, contactez-nous sur WhatsApp au ${esc(BOUTIQUE.whatsappAffiche)} ou passez en boutique.`);
     if (i("authenticite")) parties.push(`ℹ️ Pour toute question sur l'origine, les papiers ou la garantie d'un modèle précis, contactez directement la boutique : l'équipe vous répondra pour chaque pièce.<br>${bouton("Poser la question sur WhatsApp", lienWa("Bonjour, j'ai une question sur la garantie d'un modèle."), true)}`);
 
     // 2) Marques que nous n'avons pas

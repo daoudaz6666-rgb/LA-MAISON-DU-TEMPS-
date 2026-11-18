@@ -23,7 +23,8 @@ const BOUTIQUE = {
   nom: "La Maison du Temps",
   slogan: "L'excellence à chaque seconde",
   devise: "FCFA",
-  whatsapp: "22674181713", // numéro WhatsApp (indicatif 226 sans +) — à changer si différent du téléphone
+  whatsapp: "22661216062", // numéro WhatsApp (indicatif 226 sans +, sans espaces)
+  whatsappAffiche: "+226 61 21 60 62", // numéro WhatsApp tel qu'il s'affiche sur le site
   email: "contact@lamaisondutemps.com", // ← remplacer par votre vraie adresse e-mail
   telephone: "+226 74 18 17 13",
   snapchat: "president_vampa",
@@ -221,7 +222,7 @@ const ACTUALITES = [
     contenu: [
       "La Maison du Temps vous accueille aux 1200 Logements, à Ouagadougou, tous les jours jusqu'à 20h00.",
       "Montres de prestige, montres de marque, parfums et bracelets : venez découvrir notre collection et profiter de nos conseils.",
-      "Vous pouvez aussi nous joindre au +226 74 18 17 13 ou sur WhatsApp.",
+      "Vous pouvez aussi nous appeler au +226 74 18 17 13 ou nous écrire sur WhatsApp au +226 61 21 60 62.",
     ],
     lien: { texte: "Itinéraire Google Maps", url: BOUTIQUE.carte } },
 ];

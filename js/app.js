@@ -223,7 +223,7 @@
                 <li>${BOUTIQUE.horaires}</li>
                 <li><a href="tel:${BOUTIQUE.telephone.replace(/\s/g, "")}">${BOUTIQUE.telephone}</a></li>
                 <li><a href="mailto:${BOUTIQUE.email}">${BOUTIQUE.email}</a></li>
-                <li><a href="https://wa.me/${BOUTIQUE.whatsapp}" target="_blank" rel="noopener">WhatsApp</a></li>
+                <li><a href="https://wa.me/${BOUTIQUE.whatsapp}" target="_blank" rel="noopener">WhatsApp : ${esc(BOUTIQUE.whatsappAffiche)}</a></li>
                 ${BOUTIQUE.snapchat ? `<li><a href="https://www.snapchat.com/add/${encodeURIComponent(BOUTIQUE.snapchat)}" target="_blank" rel="noopener">Snapchat : ${esc(BOUTIQUE.snapchat.toUpperCase())}</a></li>` : ""}
               </ul>
             </div>
@@ -427,6 +427,7 @@
               <li>${ICONES.horloge}<div><strong>Horaires</strong><span>${BOUTIQUE.horaires}</span></div></li>
               <li>${ICONES.repere}<div><strong>Adresse</strong><span>${BOUTIQUE.adresse}<br>${BOUTIQUE.boitePostale}<br>Plus code : ${BOUTIQUE.pluscode}</span></div></li>
               <li>${ICONES.tel}<div><strong>Téléphone</strong><span><a href="tel:${BOUTIQUE.telephone.replace(/\s/g, "")}">${BOUTIQUE.telephone}</a></span></div></li>
+              <li>${ICONES.whatsapp}<div><strong>WhatsApp</strong><span><a href="https://wa.me/${BOUTIQUE.whatsapp}" target="_blank" rel="noopener">${esc(BOUTIQUE.whatsappAffiche)}</a></span></div></li>
             </ul>
             <div class="hero-btns">
               <a class="btn btn-or" href="${BOUTIQUE.carte}" target="_blank" rel="noopener">${ICONES.repere} Itinéraire</a>
