@@ -7,7 +7,7 @@
   <title>Gestion — La Maison du Temps</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Didact+Gothic&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@700&family=Didact+Gothic&display=swap" rel="stylesheet">
   <style>
     :root {
       --noir: #0f0e0d; --noir-2: #1b1917; --creme: #f7f3ee; --blanc: #fff;
@@ -39,10 +39,59 @@
 
     .carte-blanche { background: var(--blanc); border: 1px solid var(--bord); border-radius: var(--rayon); padding: 22px; }
 
-    /* Connexion */
-    #connexion { max-width: 460px; margin: 40px auto; }
-    #connexion h2 { font-family: "Cinzel", serif; font-size: 1.3rem; margin-bottom: 8px; }
-    #connexion p { color: var(--gris); margin-bottom: 16px; font-size: .95rem; }
+    /* ---------- Écran de connexion ---------- */
+    body.page-connexion { padding-bottom: 0; background: var(--noir); }
+    body.page-connexion > header { display: none; }
+    body.page-connexion main { max-width: none; padding: 0; }
+    .ecran { min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 32px 16px; position: relative; overflow: hidden;
+      background: radial-gradient(ellipse at 50% 35%, rgba(201,161,59,.16), transparent 60%), var(--noir); }
+    .ecran::before { content: ""; position: absolute; inset: 0; background: var(--fond-connexion, none) center / cover no-repeat; opacity: .28; filter: grayscale(.3); }
+    .ecran::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,14,13,.55) 0%, rgba(15,14,13,.85) 70%, var(--noir) 100%); }
+    .boite { position: relative; z-index: 1; width: 100%; max-width: 420px; text-align: center; color: #efe7da;
+      background: linear-gradient(180deg, rgba(32,29,26,.86), rgba(20,18,16,.92)); border: 1px solid rgba(201,161,59,.38); border-radius: 20px;
+      padding: 40px 32px 30px; box-shadow: 0 30px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.04);
+      -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); animation: apparition .7s ease-out both; }
+    .boite::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 2px; border-radius: 2px;
+      background: linear-gradient(90deg, transparent, #e8c873, transparent); }
+    @keyframes apparition { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .boite { animation: none; } }
+
+    .marque-logo { display: flex; flex-direction: column; align-items: center; margin-bottom: 26px; }
+    .marque-logo svg { width: 104px; height: 90px; filter: drop-shadow(0 4px 14px rgba(201,161,59,.25)); }
+    .or-texte { background: linear-gradient(135deg, #f6e08e 0%, #d4a93a 45%, #f1d77a 70%, #a87a1f 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .logo-la { display: flex; align-items: center; gap: 10px; font-family: "Cinzel", serif; font-weight: 600; font-size: .72rem; letter-spacing: .36em; padding-left: .36em; margin-top: 10px; color: #e3c46f; }
+    .logo-la::before, .logo-la::after, .logo-devise::before, .logo-devise::after { content: ""; height: 1px; background: linear-gradient(90deg, #a87a1f, #f1d77a); }
+    .logo-la::before, .logo-la::after { width: 36px; }
+    .logo-nom { font-family: "Cinzel", serif; font-weight: 600; font-size: 1.55rem; letter-spacing: .07em; margin: 4px 0 6px; line-height: 1.1; }
+    .logo-devise { display: flex; align-items: center; gap: 8px; font-family: "Cinzel", serif; font-size: .58rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: #cdb98a; }
+    .logo-devise::before, .logo-devise::after { width: 16px; }
+
+    .boite h2 { font-family: "Cinzel", serif; font-weight: 500; font-size: 1rem; letter-spacing: .22em; text-transform: uppercase; color: #fff; margin-bottom: 6px; }
+    .boite .sous-titre { color: #a89f93; font-size: .92rem; margin-bottom: 24px; }
+    .boite form { text-align: left; }
+    .boite .libelle { display: block; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: #cdb98a; margin-bottom: 8px; }
+    .champ-cle { position: relative; display: flex; align-items: center; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.14); border-radius: 12px; transition: border-color .2s, box-shadow .2s; }
+    .champ-cle:focus-within { border-color: var(--or); box-shadow: 0 0 0 3px rgba(201,161,59,.22); }
+    .champ-cle svg { flex-shrink: 0; width: 20px; height: 20px; margin-left: 14px; color: #cdb98a; }
+    .champ-cle input { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: #fff; font-size: 1rem; padding: 14px 12px; letter-spacing: .02em; }
+    .champ-cle input::placeholder { color: #6f675d; }
+    .voir { width: 44px; height: 44px; display: grid; place-items: center; color: #a89f93; border-radius: 10px; margin-right: 2px; }
+    .voir:hover, .voir:focus-visible { color: #e3c46f; }
+    .voir svg { margin: 0; }
+    .btn-connexion { width: 100%; margin-top: 18px; min-height: 52px; border-radius: 12px; font-family: "Cinzel", serif; font-weight: 600; font-size: .9rem; letter-spacing: .2em; text-transform: uppercase; color: #1a1408;
+      background: linear-gradient(135deg, #f6e08e 0%, #d4a93a 45%, #f1d77a 70%, #b8892a 100%); box-shadow: 0 10px 26px rgba(201,161,59,.28); transition: transform .15s, box-shadow .2s, filter .2s; }
+    .btn-connexion:hover { filter: brightness(1.06); box-shadow: 0 14px 32px rgba(201,161,59,.38); }
+    .btn-connexion:active { transform: translateY(1px); }
+    .btn-connexion:disabled { opacity: .7; cursor: wait; }
+    .boite .erreur { background: rgba(180,70,60,.14); border: 1px solid rgba(180,70,60,.45); color: #f3b1a8; border-radius: 10px; padding: 10px 12px; margin-top: 14px; }
+    .bas-boite { margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: .82rem; color: #8c8378; }
+    .bas-boite a { color: #e3c46f; text-decoration: none; }
+    .bas-boite a:hover { text-decoration: underline; }
+    @media (max-width: 420px) {
+      .boite { padding: 32px 20px 24px; }
+      .logo-nom { font-size: 1.25rem; }
+      .marque-logo svg { width: 88px; height: 76px; }
+    }
     label.champ { display: block; font-size: .85rem; color: var(--gris); margin-bottom: 12px; }
     label.champ > input, label.champ > select, label.champ > textarea { display: block; width: 100%; margin-top: 4px; padding: 11px 12px; border: 1px solid var(--bord); border-radius: 10px; background: var(--blanc); color: var(--texte); font-size: 1rem; }
     label.champ > textarea { min-height: 80px; resize: vertical; }
@@ -100,7 +149,7 @@
     }
   </style>
 </head>
-<body>
+<body class="page-connexion">
   <header>
     <div>
       <h1>La Maison du Temps</h1>
@@ -114,16 +163,37 @@
 
   <main>
     <!-- Connexion -->
-    <section id="connexion" class="carte-blanche">
-      <h2>Connexion</h2>
-      <p>Entrez la clé d'accès qui vous a été donnée. Elle reste enregistrée sur cet appareil jusqu'à la déconnexion.</p>
-      <form id="form-connexion">
-        <label class="champ">Clé d'accès
-          <input id="cle" type="password" autocomplete="current-password" required placeholder="github_pat_…">
-        </label>
-        <button class="btn btn-or" type="submit" style="width:100%">Se connecter</button>
-        <p class="erreur" id="erreur-connexion" hidden></p>
-      </form>
+    <section id="connexion" class="ecran">
+      <div class="boite">
+        <div class="marque-logo" aria-label="La Maison du Temps">
+          <span id="monogramme"></span>
+          <span class="logo-la">LA</span>
+          <span class="logo-nom or-texte">MAISON DU TEMPS</span>
+          <span class="logo-devise">L'excellence à chaque seconde</span>
+        </div>
+        <h2>Espace gestion</h2>
+        <p class="sous-titre">Photos, prix et produits du site</p>
+        <form id="form-connexion">
+          <label class="libelle" for="cle">Clé d'accès</label>
+          <div class="champ-cle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3 20 3m-3 3 3 3m-6 0 2.5 2.5"/>
+            </svg>
+            <input id="cle" type="password" autocomplete="current-password" required placeholder="Collez votre clé ici" spellcheck="false">
+            <button class="voir" id="voir-cle" type="button" aria-label="Afficher la clé" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <button class="btn-connexion" type="submit">Se connecter</button>
+          <p class="erreur" id="erreur-connexion" role="alert" hidden></p>
+        </form>
+        <div class="bas-boite">
+          <span>🔒 Clé gardée sur cet appareil</span>
+          <a href="index.html">← Retour au site</a>
+        </div>
+      </div>
     </section>
 
     <!-- Gestion -->

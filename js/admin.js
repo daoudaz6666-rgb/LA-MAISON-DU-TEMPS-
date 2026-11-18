@@ -161,6 +161,45 @@
     $("#btn-publier").disabled = !n || etat.enCours;
   }
 
+  // ---------- Écran de connexion : logo MT doré (même dessin que sur le site) ----------
+  function monogramme() {
+    const cx = 66, cy = 50, r = 44;
+    const pt = (deg, rr = r) => {
+      const a = (deg * Math.PI) / 180;
+      return [(cx + Math.sin(a) * rr).toFixed(1), (cy - Math.cos(a) * rr).toFixed(1)];
+    };
+    const [x1, y1] = pt(-25), [x2, y2] = pt(165);
+    const graduations = [0, 30, 60, 90, 120, 150].map((d) => {
+      const [ax, ay] = pt(d, d % 90 === 0 ? 34 : 37), [bx, by] = pt(d, 40.5);
+      return `<line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" stroke-width="${d % 90 === 0 ? 3 : 2.2}"/>`;
+    }).join("");
+    return `
+      <svg viewBox="0 0 124 108" aria-hidden="true">
+        <defs><linearGradient id="or-connexion" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f7e3a1"/><stop offset=".35" stop-color="#d9ad48"/>
+          <stop offset=".6" stop-color="#f3d888"/><stop offset="1" stop-color="#a5741c"/>
+        </linearGradient></defs>
+        <g stroke="url(#or-connexion)" fill="none" stroke-linecap="round">
+          <path d="M${x1} ${y1} A${r} ${r} 0 1 1 ${x2} ${y2}" stroke-width="2.6"/>
+          ${graduations}
+        </g>
+        <rect x="${cx + r + 1}" y="${cy - 6}" width="6" height="12" rx="1.5" fill="url(#or-connexion)"/>
+        <text x="2" y="80" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="76" fill="url(#or-connexion)">M</text>
+        <text x="47" y="99" font-family="Cormorant Garamond, Georgia, serif" font-weight="700" font-size="94" fill="url(#or-connexion)">T</text>
+      </svg>`;
+  }
+  $("#monogramme").innerHTML = monogramme();
+  if (typeof IMAGES !== "undefined" && IMAGES.hero)
+    $("#connexion").style.setProperty("--fond-connexion", `url("${IMAGES.hero}")`);
+
+  $("#voir-cle").addEventListener("click", () => {
+    const champ = $("#cle");
+    const visible = champ.type === "password";
+    champ.type = visible ? "text" : "password";
+    $("#voir-cle").setAttribute("aria-pressed", String(visible));
+    $("#voir-cle").setAttribute("aria-label", visible ? "Masquer la clé" : "Afficher la clé");
+  });
+
   // ---------- Connexion ----------
   async function connecter(cle) {
     etat.cle = cle;
@@ -171,6 +210,7 @@
     etat.catSha = sha;
     stockage.ecrire(cle);
     $("#connexion").hidden = true;
+    document.body.classList.remove("page-connexion");
     $("#gestion").hidden = false;
     $("#barre").hidden = false;
     $("#deconnexion").hidden = false;
@@ -182,8 +222,9 @@
     e.preventDefault();
     const err = $("#erreur-connexion");
     err.hidden = true;
-    const bouton = e.submitter || $("#form-connexion button");
+    const bouton = $(".btn-connexion");
     bouton.disabled = true;
+    bouton.textContent = "Connexion…";
     try {
       await connecter($("#cle").value.trim());
     } catch (ex) {
@@ -193,6 +234,7 @@
       err.hidden = false;
     } finally {
       bouton.disabled = false;
+      bouton.textContent = "Se connecter";
     }
   });
 
