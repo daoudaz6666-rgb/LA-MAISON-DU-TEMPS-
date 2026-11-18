@@ -223,6 +223,7 @@ body.no-scroll { overflow: hidden; }
 .tiroir-pied { padding: 20px 24px 26px; border-top: 1px solid var(--bord); background: var(--blanc); display: flex; flex-direction: column; gap: 12px; }
 .total { display: flex; justify-content: space-between; font-size: 1.1rem; }
 .total strong { font-size: 1.25rem; }
+.info-wa { margin-top: 10px; font-size: .78rem; color: var(--gris); text-align: center; line-height: 1.4; }
 .livraison-info { font-size: .8rem; color: var(--gris); }
 .jauge { height: 5px; background: var(--bord); border-radius: 3px; overflow: hidden; }
 .jauge div { height: 100%; background: var(--or); transition: width .4s; }

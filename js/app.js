@@ -941,7 +941,8 @@
       <div class="livraison-info">${reste > 0 ? `Plus que <strong>${fmt(reste)}</strong> pour la livraison offerte` : "🎉 Livraison offerte !"}</div>
       <div class="jauge"><div style="width:${pct}%"></div></div>
       <div class="total"><span>Sous-total</span><strong>${fmt(total)}</strong></div>
-      <button class="btn btn-or btn-plein" data-action="commander">Passer la commande</button>
+      <button class="btn btn-whatsapp btn-plein" data-action="commander">${ICONES.whatsapp.replace("<svg", '<svg width="20" height="20"')} Commander sur WhatsApp</button>
+      <p class="info-wa">Les commandes se font uniquement par WhatsApp : vos articles nous sont envoyés avec le lien de leurs photos.</p>
     `;
   }
 
@@ -961,8 +962,8 @@
     const livraison = total >= BOUTIQUE.livraisonGratuiteDes ? 0 : 2000;
     $("#modal-boite").innerHTML = `
       <button class="icon-btn modal-fermer" data-action="tout-fermer" aria-label="Fermer">${ICONES.croix}</button>
-      <h3>Finaliser la commande</h3>
-      <p>Remplissez vos informations : votre commande sera envoyée sur WhatsApp pour confirmation.</p>
+      <h3>Commander sur WhatsApp</h3>
+      <p>Remplissez vos informations puis appuyez sur « Envoyer sur WhatsApp » : votre commande, avec la liste et les photos des articles choisis, s'ouvre dans WhatsApp. Il ne reste qu'à appuyer sur Envoyer.</p>
       <form id="form-commande">
         <div class="champs-duo">
           <div class="champ"><label for="c-nom">Nom complet</label><input id="c-nom" name="nom" required></div>
@@ -983,20 +984,33 @@
           <div><span>Livraison</span><span>${livraison ? fmt(livraison) : "Offerte"}</span></div>
           <div class="total-ligne"><span>Total</span><span>${fmt(total + livraison)}</span></div>
         </div>
-        <button class="btn btn-whatsapp btn-plein" type="submit">${ICONES.whatsapp.replace("<svg", '<svg width="20" height="20"')} Envoyer la commande</button>
+        <button class="btn btn-whatsapp btn-plein" type="submit">${ICONES.whatsapp.replace("<svg", '<svg width="20" height="20"')} Envoyer sur WhatsApp</button>
       </form>
     `;
     ouvrir("modal");
     $("#form-commande").addEventListener("submit", (e) => {
       e.preventDefault();
       const d = Object.fromEntries(new FormData(e.target));
-      const lignes = etat.panier.map((l) => `• ${l.qte} × ${parId(l.id).nom} — ${fmt(parId(l.id).prix * l.qte)}`).join("\n");
+      // Adresse du site (pour que les liens marchent dans WhatsApp, même si la page est ouverte en local)
+      const site = location.protocol.startsWith("http") ? location.origin + location.pathname : "https://la-maison-du-temps.vercel.app/";
+      const lignes = etat.panier.map((l, i) => {
+        const p = parId(l.id);
+        return `*${i + 1}. ${p.nom}*  (Réf. ${p.id})\n` +
+          `   ${[libelleType(p.type), libelleGenre(p.genre), vraieMarque(p.marque) ? p.marque : ""].filter(Boolean).join(" · ")}\n` +
+          `   Qté : ${l.qte} × ${fmt(p.prix)} = *${fmt(p.prix * l.qte)}*\n` +
+          `   📷 Photo : ${new URL(p.image, site).href}\n` +
+          `   🔗 Fiche : ${site}#/produit/${p.id}`;
+      }).join("\n\n");
       const message =
         `🛍️ *Nouvelle commande — ${BOUTIQUE.nom}*\n\n${lignes}\n\n` +
         `Livraison : ${livraison ? fmt(livraison) : "Offerte"}\n*Total : ${fmt(total + livraison)}*\n\n` +
         `👤 ${d.nom}\n📞 ${d.tel}\n📍 ${d.ville}, ${d.quartier}\n💳 ${d.paiement}` +
         (d.note ? `\n📝 ${d.note}` : "");
-      window.open(`https://wa.me/${BOUTIQUE.whatsapp}?text=${encodeURIComponent(message)}`, "_blank", "noopener");
+      const lienCommande = `https://wa.me/${BOUTIQUE.whatsapp}?text=${encodeURIComponent(message)}`;
+      // Si le navigateur bloque la nouvelle fenêtre, on ouvre WhatsApp dans la page
+      const fenetreWa = window.open(lienCommande, "_blank");
+      if (fenetreWa) fenetreWa.opener = null;
+      else location.href = lienCommande;
       etat.panier = [];
       sauver();
       majCompteurs();
@@ -1005,8 +1019,9 @@
         <div class="merci">
           ${ICONES.check}
           <h3>Merci ${esc(d.nom.split(" ")[0])} !</h3>
-          <p style="color:var(--gris);margin:8px 0 24px">Votre commande a été préparée sur WhatsApp. Envoyez le message pour que nous la confirmions rapidement.</p>
-          <button class="btn btn-noir" data-action="tout-fermer">Continuer mes achats</button>
+          <p style="color:var(--gris);margin:8px 0 18px">Votre commande est prête dans WhatsApp : <strong>appuyez sur Envoyer</strong> pour que nous la recevions et la confirmions rapidement.</p>
+          <a class="btn btn-whatsapp btn-plein" href="${esc(lienCommande)}" target="_blank" rel="noopener">${ICONES.whatsapp.replace("<svg", '<svg width="20" height="20"')} WhatsApp ne s'est pas ouvert ? Cliquez ici</a>
+          <button class="btn btn-noir" style="margin-top:10px" data-action="tout-fermer">Continuer mes achats</button>
         </div>`;
     });
   }
