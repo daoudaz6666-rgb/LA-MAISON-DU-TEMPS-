@@ -665,6 +665,59 @@
     ? `<a class="btn btn-or" href="${a.lien.url}" ${a.lien.url.startsWith("http") ? 'target="_blank" rel="noopener"' : ""}>${esc(a.lien.texte)} ${ICONES.fleche}</a>`
     : "";
 
+  // ---------- Publications Facebook & Instagram (mises à jour automatiquement) ----------
+  // Facebook : module officiel « Page Plugin », il affiche les dernières publications de la page.
+  // Instagram : widget Behold.so (gratuit) une fois BOUTIQUE.instagramFeedId renseigné.
+  let beholdCharge = false;
+  function sectionReseaux() {
+    const fbUrl = BOUTIQUE.facebook ? `https://www.facebook.com/${BOUTIQUE.facebook}` : "";
+    const igUrl = BOUTIQUE.instagram ? `https://www.instagram.com/${BOUTIQUE.instagram}/` : "";
+    if (!fbUrl && !igUrl) return "";
+    if (BOUTIQUE.instagramFeedId && !beholdCharge) {
+      beholdCharge = true;
+      const s = document.createElement("script");
+      s.type = "module";
+      s.src = "https://w.behold.so/widget.js";
+      document.head.appendChild(s);
+    }
+    const fbModule = fbUrl ? `
+      <div class="reseau-bloc">
+        <div class="reseau-tete">${ICONE_FB}<div><strong>Facebook</strong><a href="${fbUrl}" target="_blank" rel="noopener">${esc(BOUTIQUE.facebook)}</a></div></div>
+        <div class="reseau-fb">
+          <iframe title="Publications Facebook de ${esc(BOUTIQUE.nom)}" loading="lazy"
+            src="https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(fbUrl)}&tabs=timeline&width=500&height=640&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false"
+            width="500" height="640" scrolling="no" frameborder="0" allowfullscreen="true"
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+        </div>
+        <a class="reseau-lien" href="${fbUrl}" target="_blank" rel="noopener">Ouvrir notre page Facebook ${ICONES.fleche}</a>
+      </div>` : "";
+    const igModule = igUrl ? `
+      <div class="reseau-bloc">
+        <div class="reseau-tete">${ICONE_IG}<div><strong>Instagram</strong><a href="${igUrl}" target="_blank" rel="noopener">@${esc(BOUTIQUE.instagram)}</a></div></div>
+        ${BOUTIQUE.instagramFeedId
+          ? `<div class="reseau-ig"><behold-widget feed-id="${esc(BOUTIQUE.instagramFeedId)}"></behold-widget></div>`
+          : `<a class="reseau-ig-vide" href="${igUrl}" target="_blank" rel="noopener">
+               ${ICONE_IG}
+               <strong>Nos nouveautés sur Instagram</strong>
+               <span>Montres, parfums et arrivages : suivez @${esc(BOUTIQUE.instagram)}</span>
+               <span class="btn btn-or">Voir nos publications</span>
+             </a>`}
+      </div>` : "";
+    return `
+      <section class="section reseaux">
+        <div class="container">
+          <div class="section-tete">
+            <span class="sur-titre">Sur nos réseaux</span>
+            <h2>Nos dernières publications</h2>
+            <p>Retrouvez ici, en direct, ce que nous publions sur Facebook et Instagram.</p>
+          </div>
+          <div class="reseaux-grille">${fbModule}${igModule}</div>
+        </div>
+      </section>`;
+  }
+  const ICONE_FB = `<svg class="reseau-icone" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21h3z"/></svg>`;
+  const ICONE_IG = `<svg class="reseau-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>`;
+
   function pageActualites() {
     const [une, ...autres] = actusTriees();
     $("#page").innerHTML = `
@@ -675,6 +728,7 @@
           <h1>Actualités</h1>
         </div>
       </section>
+      ${sectionReseaux()}
       <div class="container" style="padding:60px 0 90px">
         ${une ? `
         <article class="actu-une" data-actu="${une.id}">

@@ -29,6 +29,9 @@ const BOUTIQUE = {
   telephone: "+226 74 18 17 13",
   snapchat: "president_vampa",
   instagram: "president_vampa",
+  // Flux Instagram automatique : créez un flux gratuit sur https://behold.so (connexion avec votre Instagram),
+  // puis collez ici le « Feed ID » fourni. Laisser vide = simple bouton vers Instagram.
+  instagramFeedId: "",
   facebook: "Maison-Temps10", // nom de la page Facebook (lien : facebook.com/Maison-Temps10)
   adresse: "1200 Logements, Ouagadougou 01",
   boitePostale: "01 BP 6829 Ouagadougou 01",
