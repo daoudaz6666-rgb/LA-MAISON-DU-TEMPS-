@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+Sitemap: https://la-maison-du-temps.vercel.app/sitemap.xml
