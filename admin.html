@@ -105,6 +105,35 @@
     .onglets button[aria-selected="true"] { color: var(--noir); border-bottom-color: var(--or); }
     .onglets .nb { font-size: .75rem; background: #ece5da; color: var(--gris); border-radius: 20px; padding: 1px 8px; }
     .onglets button[aria-selected="true"] .nb { background: var(--or); color: var(--noir); }
+    .onglets .onglet-accueil { color: var(--or-fonce); border-right: 1px solid var(--bord); border-bottom-color: transparent !important; margin-right: 4px; }
+
+    /* Accueil de l'espace gestion : 4 grandes tuiles */
+    .accueil-gestion { padding: 18px 0 30px; }
+    .accueil-gestion h2 { font-family: "Cinzel", serif; font-size: 1.6rem; color: var(--noir); }
+    .accueil-gestion .sous { color: var(--gris); margin: 4px 0 22px; }
+    .tuiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .tuile { position: relative; aspect-ratio: 4 / 5; border-radius: 18px; overflow: hidden; color: #fff; text-align: left;
+      display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; padding: 20px;
+      background: var(--noir) var(--fond, none) center / cover no-repeat; box-shadow: 0 10px 28px rgba(20,15,10,.16);
+      transition: transform .25s ease, box-shadow .25s ease; isolation: isolate; }
+    .tuile::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(15,14,13,.05) 30%, rgba(15,14,13,.88) 100%); }
+    .tuile::after { content: ""; position: absolute; inset: 0; border-radius: inherit; border: 1px solid rgba(201,161,59,0); transition: border-color .25s; }
+    .tuile:hover, .tuile:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(20,15,10,.26); outline: none; }
+    .tuile:hover::after, .tuile:focus-visible::after { border-color: rgba(201,161,59,.9); }
+    .tuile-icone { position: absolute; top: 16px; left: 16px; width: 46px; height: 46px; display: grid; place-items: center; font-size: 1.4rem;
+      background: rgba(255,255,255,.92); border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+    .tuile-nom { font-family: "Cinzel", serif; font-weight: 600; font-size: 1.35rem; letter-spacing: .04em; }
+    .tuile-nb { font-size: .88rem; color: #e9d9ae; }
+    .tuile-nb::after { content: "  →"; color: var(--or); }
+    @media (max-width: 860px) { .tuiles { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 420px) {
+      .tuiles { gap: 10px; }
+      .tuile { aspect-ratio: 1; padding: 14px; border-radius: 14px; }
+      .tuile-nom { font-size: 1.05rem; }
+      .tuile-icone { width: 38px; height: 38px; font-size: 1.1rem; top: 12px; left: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .tuile { transition: none; } }
+
     .produit.actu .photo { aspect-ratio: 16 / 10; }
     .actu-date { font-size: .78rem; color: var(--or-fonce); font-weight: 600; letter-spacing: .02em; }
     .actu-resume { font-size: .86rem; color: var(--gris); display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
@@ -219,7 +248,29 @@
 
     <!-- Gestion -->
     <section id="gestion" hidden>
+      <!-- Accueil : les 4 rubriques -->
+      <div id="accueil-gestion" class="accueil-gestion">
+        <h2 id="bonjour">Bonjour 👋</h2>
+        <p class="sous">Que voulez-vous gérer aujourd'hui ?</p>
+        <div class="tuiles">
+          <button type="button" class="tuile" data-onglet="montre" data-fond="montres">
+            <span class="tuile-icone">⌚</span><span class="tuile-nom">Montres</span><span class="tuile-nb"></span>
+          </button>
+          <button type="button" class="tuile" data-onglet="parfum" data-fond="parfums">
+            <span class="tuile-icone">🧴</span><span class="tuile-nom">Parfums</span><span class="tuile-nb"></span>
+          </button>
+          <button type="button" class="tuile" data-onglet="bracelet" data-fond="bracelets">
+            <span class="tuile-icone">📿</span><span class="tuile-nom">Bracelets</span><span class="tuile-nb"></span>
+          </button>
+          <button type="button" class="tuile" data-onglet="actus" data-fond="actus">
+            <span class="tuile-icone">📰</span><span class="tuile-nom">Actualités</span><span class="tuile-nb"></span>
+          </button>
+        </div>
+      </div>
+
+      <div id="rubrique">
       <nav class="onglets" id="onglets" role="tablist" aria-label="Rubriques">
+        <button type="button" data-onglet="accueil" class="onglet-accueil" aria-label="Retour à l'accueil">🏠 Accueil</button>
         <button type="button" role="tab" data-onglet="montre" aria-selected="true">⌚ Montres <span class="nb"></span></button>
         <button type="button" role="tab" data-onglet="parfum" aria-selected="false">🧴 Parfums <span class="nb"></span></button>
         <button type="button" role="tab" data-onglet="bracelet" aria-selected="false">📿 Bracelets <span class="nb"></span></button>
@@ -231,6 +282,7 @@
         <button class="btn btn-noir" id="btn-ajouter" type="button">+ Ajouter</button>
       </div>
       <div class="grille" id="grille"></div>
+      </div>
     </section>
   </main>
 

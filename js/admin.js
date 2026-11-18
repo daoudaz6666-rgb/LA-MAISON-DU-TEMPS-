@@ -32,7 +32,7 @@
     base: PRODUITS.map((p) => ({ ...p })), // produits de js/data.js
     baseActus: ACTUALITES.map((a) => ({ ...a })), // actualités de js/data.js
     cat: { modifs: {}, ajouts: [], actus: { modifs: {}, ajouts: [] } }, // contenu de js/catalogue.js
-    onglet: "montre", // montre | parfum | bracelet | actus
+    onglet: "accueil", // accueil | montre | parfum | bracelet | actus
     editionActu: null,
     catSha: null,
     photos: {},    // photos choisies pas encore envoyées : { "__photo:xxx": { blob, url } }
@@ -155,15 +155,44 @@
   };
   const BOUTON_AJOUT = { montre: "+ Ajouter une montre", parfum: "+ Ajouter un parfum", bracelet: "+ Ajouter un bracelet", actus: "+ Ajouter une actualité" };
 
+  function compter(o) {
+    return o === "actus" ? actus().length : produits().filter((p) => p.type === o).length;
+  }
+
   function majOnglets() {
-    const tous = produits();
-    document.querySelectorAll("#onglets button").forEach((b) => {
+    document.querySelectorAll("#onglets [data-onglet]").forEach((b) => {
       const o = b.dataset.onglet;
+      if (o === "accueil") return;
       b.setAttribute("aria-selected", String(o === etat.onglet));
-      b.querySelector(".nb").textContent = o === "actus" ? actus().length : tous.filter((p) => p.type === o).length;
+      b.querySelector(".nb").textContent = compter(o);
     });
     $("#aide").innerHTML = AIDES[etat.onglet === "actus" ? "actus" : "produit"];
     $("#btn-ajouter").textContent = BOUTON_AJOUT[etat.onglet];
+  }
+
+  // Accueil : 4 grandes tuiles (Montres, Parfums, Bracelets, Actualités)
+  function afficherAccueil() {
+    $("#bonjour").textContent = `Bonjour ${etat.nom || ""} 👋`;
+    const fonds = {
+      montres: IMAGES.montres, parfums: IMAGES.parfums, bracelets: IMAGES.bracelets,
+      actus: srcImage(actus()[0]?.image) || IMAGES.hero,
+    };
+    // Photo de la dernière actualité, sauf si c'est la même que la tuile Montres
+    if (fonds.actus.split("?")[0] === IMAGES.montres.split("?")[0]) fonds.actus = IMAGES.hero;
+    const mots = { montre: ["montre", "montres"], parfum: ["parfum", "parfums"], bracelet: ["bracelet", "bracelets"], actus: ["actualité", "actualités"] };
+    document.querySelectorAll(".tuile").forEach((t) => {
+      const o = t.dataset.onglet, n = compter(o);
+      t.style.setProperty("--fond", `url("${fonds[t.dataset.fond]}")`);
+      t.querySelector(".tuile-nb").textContent = `${n} ${mots[o][n > 1 ? 1 : 0]}`;
+    });
+  }
+
+  function afficher() {
+    const accueil = etat.onglet === "accueil";
+    $("#accueil-gestion").hidden = !accueil;
+    $("#rubrique").hidden = accueil;
+    if (accueil) return afficherAccueil();
+    afficherRubrique();
   }
 
   function afficherActus() {
@@ -188,7 +217,7 @@
       </article>`).join("") : `<p class="vide">Aucune actualité.</p>`;
   }
 
-  function afficher() {
+  function afficherRubrique() {
     majOnglets();
     if (etat.onglet === "actus") return afficherActus();
     const q = recherche();
@@ -392,8 +421,9 @@
   });
 
   $("#recherche").addEventListener("input", afficher);
-  $("#onglets").addEventListener("click", (e) => {
-    const b = e.target.closest("[data-onglet]");
+  // Onglets du haut et tuiles de l'accueil
+  $("#gestion").addEventListener("click", (e) => {
+    const b = e.target.closest("#onglets [data-onglet], .tuile[data-onglet]");
     if (!b || b.dataset.onglet === etat.onglet) return;
     etat.onglet = b.dataset.onglet;
     $("#recherche").value = "";
