@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Gestion — La Maison du Temps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Didact+Gothic&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --noir: #0f0e0d; --noir-2: #1b1917; --creme: #f7f3ee; --blanc: #fff;
+      --or: #c9a13b; --or-fonce: #9a7a24; --texte: #2a2622; --gris: #77706a;
+      --bord: #e6dfd6; --rouge: #b4463c; --vert: #2f7d4f; --rayon: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Didact Gothic", system-ui, sans-serif; background: var(--creme); color: var(--texte); line-height: 1.5; padding-bottom: 96px; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+    img { display: block; max-width: 100%; }
+    [hidden] { display: none !important; }
+
+    header { background: var(--noir); color: var(--blanc); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; z-index: 5; }
+    header h1 { font-family: "Cinzel", serif; font-size: 1.05rem; color: var(--or); letter-spacing: .05em; }
+    header small { display: block; color: #bdb5ab; font-size: .78rem; }
+    header nav { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    header nav a, header nav button { color: #e9e2d8; font-size: .85rem; padding: 6px 10px; border: 1px solid #3a352f; border-radius: 8px; text-decoration: none; }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 11px 18px; border-radius: 10px; font-weight: 600; min-height: 44px; }
+    .btn-or { background: var(--or); color: var(--noir); }
+    .btn-or:hover { background: #d6b04c; }
+    .btn-noir { background: var(--noir); color: var(--blanc); }
+    .btn-ligne { border: 1px solid var(--bord); background: var(--blanc); }
+    .btn-rouge { color: var(--rouge); border: 1px solid #e8c9c5; background: var(--blanc); }
+    .btn:disabled { opacity: .55; cursor: wait; }
+
+    .carte-blanche { background: var(--blanc); border: 1px solid var(--bord); border-radius: var(--rayon); padding: 22px; }
+
+    /* Connexion */
+    #connexion { max-width: 460px; margin: 40px auto; }
+    #connexion h2 { font-family: "Cinzel", serif; font-size: 1.3rem; margin-bottom: 8px; }
+    #connexion p { color: var(--gris); margin-bottom: 16px; font-size: .95rem; }
+    label.champ { display: block; font-size: .85rem; color: var(--gris); margin-bottom: 12px; }
+    label.champ > input, label.champ > select, label.champ > textarea { display: block; width: 100%; margin-top: 4px; padding: 11px 12px; border: 1px solid var(--bord); border-radius: 10px; background: var(--blanc); color: var(--texte); font-size: 1rem; }
+    label.champ > textarea { min-height: 80px; resize: vertical; }
+    .erreur { color: var(--rouge); font-size: .9rem; margin-top: 10px; }
+
+    /* Barre d'outils */
+    .outils { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    .outils input, .outils select { padding: 10px 12px; border: 1px solid var(--bord); border-radius: 10px; background: var(--blanc); min-height: 44px; font-size: 1rem; }
+    .outils input { flex: 1 1 220px; }
+    .aide { background: #fbf6e8; border: 1px solid #eadcb0; border-radius: var(--rayon); padding: 12px 14px; margin-bottom: 16px; font-size: .92rem; }
+
+    /* Liste produits */
+    .grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+    .produit { background: var(--blanc); border: 1px solid var(--bord); border-radius: var(--rayon); overflow: hidden; display: flex; flex-direction: column; }
+    .produit.masque { opacity: .55; }
+    .produit.modifie { border-color: var(--or); box-shadow: 0 0 0 2px rgba(201,161,59,.25); }
+    .produit .photo { position: relative; aspect-ratio: 1; background: #eee6da; }
+    .produit .photo img { width: 100%; height: 100%; object-fit: cover; }
+    .produit .photo .etiquette { position: absolute; top: 8px; left: 8px; background: rgba(15,14,13,.78); color: #fff; font-size: .72rem; padding: 3px 8px; border-radius: 20px; }
+    .btn-photo { position: absolute; bottom: 8px; right: 8px; background: var(--blanc); color: var(--noir); font-size: .85rem; font-weight: 600; padding: 8px 12px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.2); cursor: pointer; }
+    .produit .infos { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .produit h3 { font-size: 1rem; line-height: 1.3; }
+    .produit .meta { font-size: .8rem; color: var(--gris); }
+    .prix-ligne { display: flex; align-items: center; border: 1px solid var(--bord); border-radius: 10px; overflow: hidden; }
+    .prix-ligne input { flex: 1; min-width: 0; border: 0; padding: 10px 12px; font-size: 1rem; background: transparent; }
+    .prix-ligne span { padding: 0 12px; color: var(--gris); font-size: .85rem; }
+    .interrupteur { display: flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--gris); cursor: pointer; }
+    .interrupteur input { width: 18px; height: 18px; accent-color: var(--or-fonce); }
+    .actions-produit { display: flex; gap: 8px; margin-top: auto; }
+    .actions-produit .btn { flex: 1; padding: 8px 10px; min-height: 40px; font-size: .88rem; }
+
+    /* Barre d'enregistrement */
+    .barre { position: fixed; left: 0; right: 0; bottom: 0; background: var(--noir); color: var(--blanc); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; z-index: 6; flex-wrap: wrap; }
+    .barre .etat { font-size: .92rem; }
+    .barre .etat.ok { color: #9be0b4; }
+    .barre .etat.ko { color: #f3a49b; }
+
+    /* Fenêtre ajout */
+    dialog { border: 0; border-radius: var(--rayon); padding: 0; width: min(560px, calc(100% - 24px)); max-height: calc(100% - 24px); }
+    dialog::backdrop { background: rgba(0,0,0,.55); }
+    dialog form { padding: 20px; }
+    dialog h2 { font-family: "Cinzel", serif; font-size: 1.15rem; margin-bottom: 14px; }
+    .deux { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+    .apercu { width: 120px; height: 120px; object-fit: cover; border-radius: 10px; border: 1px solid var(--bord); margin-top: 6px; background: #eee6da; }
+    .pied { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+    .vide { text-align: center; color: var(--gris); padding: 40px 0; }
+
+    @media (max-width: 520px) {
+      .deux { grid-template-columns: 1fr; }
+      .grille { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .produit .infos { padding: 10px; }
+      .btn-photo { font-size: .75rem; padding: 6px 9px; }
+      .actions-produit { flex-direction: column; }
+      .barre .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>La Maison du Temps</h1>
+      <small>Espace gestion : photos et prix</small>
+    </div>
+    <nav>
+      <a href="index.html" target="_blank" rel="noopener">Voir le site</a>
+      <button id="deconnexion" hidden>Déconnexion</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Connexion -->
+    <section id="connexion" class="carte-blanche">
+      <h2>Connexion</h2>
+      <p>Entrez la clé d'accès qui vous a été donnée. Elle reste enregistrée sur cet appareil jusqu'à la déconnexion.</p>
+      <form id="form-connexion">
+        <label class="champ">Clé d'accès
+          <input id="cle" type="password" autocomplete="current-password" required placeholder="github_pat_…">
+        </label>
+        <button class="btn btn-or" type="submit" style="width:100%">Se connecter</button>
+        <p class="erreur" id="erreur-connexion" hidden></p>
+      </form>
+    </section>
+
+    <!-- Gestion -->
+    <section id="gestion" hidden>
+      <div class="aide">
+        Changez une photo avec <strong>📷 Photo</strong>, tapez un prix (laissez vide pour « Prix sur demande »),
+        puis appuyez sur <strong>Publier sur le site</strong> en bas. Le site est à jour 1 à 2 minutes après.
+      </div>
+      <div class="outils">
+        <input id="recherche" type="search" placeholder="Rechercher un produit…">
+        <select id="filtre-type">
+          <option value="">Tout</option>
+          <option value="montre">Montres</option>
+          <option value="parfum">Parfums</option>
+          <option value="bracelet">Bracelets</option>
+        </select>
+        <button class="btn btn-noir" id="btn-ajouter" type="button">+ Ajouter un produit</button>
+      </div>
+      <div class="grille" id="grille"></div>
+    </section>
+  </main>
+
+  <div class="barre" id="barre" hidden>
+    <span class="etat" id="etat">Aucune modification.</span>
+    <button class="btn btn-or" id="btn-publier" type="button" disabled>Publier sur le site</button>
+  </div>
+
+  <!-- Ajout / modification d'un produit -->
+  <dialog id="fenetre">
+    <form id="form-produit" method="dialog">
+      <h2 id="titre-fenetre">Ajouter un produit</h2>
+      <label class="champ">Nom du produit *
+        <input name="nom" required maxlength="80" placeholder="Ex. Rolex Datejust 41">
+      </label>
+      <div class="deux">
+        <label class="champ">Catégorie
+          <select name="type">
+            <option value="montre">Montre</option>
+            <option value="parfum">Parfum</option>
+            <option value="bracelet">Bracelet</option>
+          </select>
+        </label>
+        <label class="champ">Pour
+          <select name="genre">
+            <option value="homme">Homme</option>
+            <option value="femme">Femme</option>
+            <option value="mixte">Homme &amp; femme</option>
+            <option value="enfant">Enfant</option>
+          </select>
+        </label>
+        <label class="champ">Marque
+          <input name="marque" maxlength="40" placeholder="Ex. Rolex">
+        </label>
+        <label class="champ" id="champ-gamme">Gamme
+          <select name="gamme">
+            <option value="marque">Montre de marque</option>
+            <option value="prestige">Montre de prestige</option>
+          </select>
+        </label>
+        <label class="champ">Prix (FCFA)
+          <input name="prix" inputmode="numeric" placeholder="Vide = prix sur demande">
+        </label>
+        <label class="champ">Étiquette (facultatif)
+          <input name="badge" maxlength="24" placeholder="Ex. Nouveau">
+        </label>
+      </div>
+      <label class="champ">Description
+        <textarea name="description" maxlength="400" placeholder="Quelques mots sur le produit"></textarea>
+      </label>
+      <label class="champ">Photo *
+        <input name="photo" type="file" accept="image/*">
+        <img class="apercu" id="apercu" alt="" hidden>
+      </label>
+      <p class="erreur" id="erreur-produit" hidden></p>
+      <div class="pied">
+        <button class="btn btn-ligne" type="button" id="btn-annuler">Annuler</button>
+        <button class="btn btn-or" type="submit">Valider</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/data.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

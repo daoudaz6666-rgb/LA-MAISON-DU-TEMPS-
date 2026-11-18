@@ -7,6 +7,18 @@
 (() => {
   "use strict";
 
+  // ---------- Photos, prix et produits ajoutés depuis admin.html (js/catalogue.js) ----------
+  (() => {
+    const c = window.CATALOGUE_ADMIN;
+    if (!c) return;
+    Object.entries(c.modifs || {}).forEach(([id, m]) => {
+      const p = PRODUITS.find((x) => x.id === Number(id));
+      if (p) Object.assign(p, m);
+    });
+    PRODUITS.push(...(c.ajouts || []));
+    for (let i = PRODUITS.length - 1; i >= 0; i--) if (PRODUITS[i].masque) PRODUITS.splice(i, 1);
+  })();
+
   // ---------- Utilitaires ----------
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
