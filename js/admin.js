@@ -145,10 +145,10 @@
             <span>FCFA</span>
           </label>
           <label class="interrupteur"><input type="checkbox" class="masquer"${p.masque ? " checked" : ""}> Masquer du site</label>
-          ${p.ajoute ? `<div class="actions-produit">
-            <button class="btn btn-ligne editer" type="button">Modifier</button>
-            <button class="btn btn-rouge supprimer" type="button">Supprimer</button>
-          </div>` : ""}
+          <div class="actions-produit">
+            <button class="btn btn-ligne editer" type="button">✎ Nom, description…</button>
+            ${p.ajoute ? `<button class="btn btn-rouge supprimer" type="button">Supprimer</button>` : ""}
+          </div>
         </div>
       </article>`).join("") : `<p class="vide">Aucun produit trouvé.</p>`;
   }
@@ -260,7 +260,7 @@
 
   function ouvrirFenetre(id = null) {
     etat.edition = id;
-    const p = id ? etat.cat.ajouts.find((x) => x.id === id) : null;
+    const p = id ? produits().find((x) => x.id === id) : null;
     form.reset();
     photoFenetre = p?.image || null;
     $("#titre-fenetre").textContent = p ? "Modifier le produit" : "Ajouter un produit";
@@ -315,7 +315,16 @@
       description: form.description.value.trim() || `${nom}, disponible en boutique à La Maison du Temps.`,
       details: [marque && `Marque : ${marque}`, LIBELLES[type] + " " + LIBELLES[form.genre.value].toLowerCase(), "Disponible en boutique"].filter(Boolean),
     };
-    if (etat.edition) {
+    const estAjout = etat.cat.ajouts.some((p) => p.id === etat.edition);
+    if (etat.edition && !estAjout) {
+      // Produit d'origine : on garde ses détails, et une étiquette vidée est bien retirée du site
+      delete champs.details;
+      champs.badge = champs.badge || "";
+      const base = etat.base.find((p) => p.id === etat.edition);
+      if (champs.image !== base.image) champs.illustration = false;
+      if (base.gamme && champs.gamme === undefined) champs.gamme = null;
+      modifier(etat.edition, champs);
+    } else if (etat.edition) {
       modifier(etat.edition, champs);
     } else {
       const id = Math.max(999, ...produits().map((p) => p.id)) + 1;
