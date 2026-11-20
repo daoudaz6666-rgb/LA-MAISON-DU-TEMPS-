@@ -13,7 +13,14 @@ window.CATALOGUE_ADMIN = {
    "gamme": "prestige",
    "badge": "Prestige",
    "description": "Un cadran épuré et des finitions d'exception."
+  },
+  "2": {
+   "prix": 75000
   }
  },
- "ajouts": []
+ "ajouts": [],
+ "actus": {
+  "modifs": {},
+  "ajouts": []
+ }
 };
