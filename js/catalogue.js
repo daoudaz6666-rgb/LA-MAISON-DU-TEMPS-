@@ -49,6 +49,24 @@ window.CATALOGUE_ADMIN = {
     "Disponible en boutique"
    ],
    "illustration": false
+  },
+  "4": {
+   "nom": "Rolex Day-Date",
+   "marque": "Rolex",
+   "type": "montre",
+   "genre": "homme",
+   "gamme": "prestige",
+   "prix": 85000,
+   "image": "images/produits/rolex-day-date-mwtvqlqt0.jpg",
+   "badge": "Prestige",
+   "description": "La montre des présidents : jour et date affichés en toutes lettres, lunette cannelée.",
+   "details": [
+    "Marque : Rolex",
+    "Modèle : Day-Date",
+    "Affichage jour et date",
+    "Disponible en boutique"
+   ],
+   "illustration": false
   }
  },
  "ajouts": [],
