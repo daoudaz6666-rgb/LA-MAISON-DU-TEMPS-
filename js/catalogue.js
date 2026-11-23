@@ -15,7 +15,22 @@ window.CATALOGUE_ADMIN = {
    "description": "Un cadran épuré et des finitions d'exception."
   },
   "2": {
-   "prix": 100000
+   "prix": 85000,
+   "nom": "Patek Philippe Nautilus",
+   "marque": "Patek Philippe",
+   "type": "montre",
+   "genre": "homme",
+   "gamme": "prestige",
+   "image": "images/produits/patek-philippe-nautilus-mwtsb25d0.jpg",
+   "badge": "Iconique",
+   "description": "Le chic sportif ultime, avec son boîtier aux lignes douces et son cadran horizontal.",
+   "details": [
+    "Marque : Patek Philippe",
+    "Modèle : Nautilus",
+    "Bracelet intégré",
+    "Disponible en boutique"
+   ],
+   "illustration": false
   }
  },
  "ajouts": [],
