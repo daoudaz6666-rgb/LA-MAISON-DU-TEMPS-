@@ -85,6 +85,24 @@ window.CATALOGUE_ADMIN = {
     "Disponible en boutique"
    ],
    "illustration": false
+  },
+  "7": {
+   "nom": "Cartier Santos",
+   "marque": "Cartier",
+   "type": "montre",
+   "genre": "mixte",
+   "gamme": "prestige",
+   "prix": 75000,
+   "image": "images/produits/cartier-santos-mwtvz7fh0.jpg",
+   "badge": "Coup de cœur",
+   "description": "Le boîtier carré et les vis apparentes d'une légende de l'élégance. Pour elle comme pour lui.",
+   "details": [
+    "Marque : Cartier",
+    "Modèle : Santos",
+    "Boîtier carré",
+    "Disponible en boutique"
+   ],
+   "illustration": false
   }
  },
  "ajouts": [
