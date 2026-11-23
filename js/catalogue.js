@@ -69,7 +69,23 @@ window.CATALOGUE_ADMIN = {
    "illustration": false
   }
  },
- "ajouts": [],
+ "ajouts": [
+  {
+   "id": 1000,
+   "nom": "Rolex day-date",
+   "marque": "Rolex",
+   "type": "montre",
+   "genre": "homme",
+   "gamme": "marque",
+   "prix": 85000,
+   "image": "images/produits/rolex-day-date-mwtvsatx0.jpg",
+   "description": "Rolex day-date, disponible en boutique à La Maison du Temps.",
+   "details": [
+    "Marque : Rolex"
+   ],
+   "note": 4.8
+  }
+ ],
  "actus": {
   "modifs": {},
   "ajouts": []
