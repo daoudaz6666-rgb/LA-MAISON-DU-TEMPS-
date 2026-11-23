@@ -67,6 +67,24 @@ window.CATALOGUE_ADMIN = {
     "Disponible en boutique"
    ],
    "illustration": false
+  },
+  "6": {
+   "nom": "Audemars Piguet squeletton",
+   "marque": "Audemars Piguet",
+   "type": "montre",
+   "genre": "homme",
+   "gamme": "prestige",
+   "prix": 125000,
+   "image": "images/produits/audemars-piguet-squeletton-mwtvx6be0.jpg",
+   "badge": "",
+   "description": "La signature Audemars Piguet et son mouvement automatique, pour un style affirmé.",
+   "details": [
+    "Marque : Audemars Piguet",
+    "Mouvement automatique",
+    "Lunette octogonale",
+    "Disponible en boutique"
+   ],
+   "illustration": false
   }
  },
  "ajouts": [
