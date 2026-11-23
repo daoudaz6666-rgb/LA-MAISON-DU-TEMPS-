@@ -31,6 +31,24 @@ window.CATALOGUE_ADMIN = {
     "Disponible en boutique"
    ],
    "illustration": false
+  },
+  "3": {
+   "prix": 90000,
+   "nom": "Rolex Submariner",
+   "marque": "Rolex",
+   "type": "montre",
+   "genre": "homme",
+   "gamme": "prestige",
+   "image": "images/produits/rolex-submariner-mwtvp3fe0.jpg",
+   "badge": "Best-seller",
+   "description": "La montre de plongée emblématique : lunette tournante, cadran noir et bracelet acier.",
+   "details": [
+    "Marque : Rolex",
+    "Modèle : Submariner",
+    "Bracelet acier",
+    "Disponible en boutique"
+   ],
+   "illustration": false
   }
  },
  "ajouts": [],
