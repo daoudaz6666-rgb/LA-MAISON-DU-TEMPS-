@@ -15,7 +15,7 @@ window.CATALOGUE_ADMIN = {
    "description": "Un cadran épuré et des finitions d'exception."
   },
   "2": {
-   "prix": 75000
+   "prix": 100000
   }
  },
  "ajouts": [],
