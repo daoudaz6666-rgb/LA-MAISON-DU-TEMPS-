@@ -12,7 +12,18 @@ window.CATALOGUE_ADMIN = {
    "genre": "homme",
    "gamme": "prestige",
    "badge": "Prestige",
-   "description": "Un cadran épuré et des finitions d'exception."
+   "description": "Un cadran épuré et des finitions d'exception.",
+   "photos": [
+    "images/produits/casio-mwur8mnp0.jpg",
+    "images/produits/casio-mwur8no41.jpg",
+    "images/produits/casio-mwur8ogk2.jpg"
+   ],
+   "details": [
+    "Marque : Patek Philippe",
+    "Collection : Genève",
+    "Style habillé",
+    "Disponible en boutique"
+   ]
   },
   "2": {
    "prix": 85000,
