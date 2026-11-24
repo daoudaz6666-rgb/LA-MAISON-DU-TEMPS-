@@ -95,7 +95,10 @@ window.CATALOGUE_ADMIN = {
     "Lunette octogonale",
     "Disponible en boutique"
    ],
-   "illustration": false
+   "illustration": false,
+   "photos": [
+    "images/produits/audemars-piguet-squeletton-mwurf1jo0.jpg"
+   ]
   },
   "7": {
    "nom": "Cartier Santos",
