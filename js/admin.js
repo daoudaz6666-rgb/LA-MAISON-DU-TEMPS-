@@ -227,6 +227,7 @@
         <div class="photo">
           <img src="${esc(srcImage(p.image))}" alt="${esc(p.nom)}" loading="lazy">
           ${p.ajoute ? `<span class="etiquette">Ajouté</span>` : p.illustration ? `<span class="etiquette">Photo d'illustration</span>` : ""}
+          ${p.photos?.length ? `<span class="nb-photos">${p.photos.length + 1} photos</span>` : ""}
           <label class="btn-photo">📷 Photo<input type="file" accept="image/*" class="choix-photo" hidden></label>
         </div>
         <div class="infos">
@@ -501,7 +502,26 @@
   // ---------- Fenêtre ajout / modification ----------
   const fenetre = $("#fenetre");
   const form = $("#form-produit");
-  let photoFenetre = null;
+  let photosFenetre = []; // la 1re = photo principale
+  const MAX_PHOTOS = 10;
+
+  function afficherGalerie() {
+    $("#galerie-admin").innerHTML = photosFenetre.map((ph, i) => `
+      <div class="vignette${i === 0 ? " principale" : ""}" data-i="${i}">
+        <img src="${esc(srcImage(ph))}" alt="">
+        ${i === 0 ? `<span class="v-tag">Principale</span>` : `<button type="button" class="v-princ" title="Mettre en photo principale" aria-label="Mettre en photo principale">★</button>`}
+        <button type="button" class="v-suppr" title="Retirer cette photo" aria-label="Retirer cette photo">✕</button>
+      </div>`).join("");
+  }
+
+  $("#galerie-admin").addEventListener("click", (e) => {
+    const v = e.target.closest(".vignette");
+    if (!v) return;
+    const i = Number(v.dataset.i);
+    if (e.target.closest(".v-suppr")) photosFenetre.splice(i, 1);
+    else if (e.target.closest(".v-princ")) photosFenetre.unshift(...photosFenetre.splice(i, 1));
+    afficherGalerie();
+  });
 
   const majGamme = () => { $("#champ-gamme").hidden = form.type.value !== "montre"; };
   form.type.addEventListener("change", majGamme);
@@ -518,7 +538,7 @@
     etat.edition = id;
     const p = id ? produits().find((x) => x.id === id) : null;
     form.reset();
-    photoFenetre = p?.image || null;
+    photosFenetre = p ? [p.image, ...(p.photos || [])].filter(Boolean) : [];
     $("#titre-fenetre").textContent = p ? "Modifier le produit" : "Ajouter un produit";
     if (p) {
       form.nom.value = p.nom;
@@ -534,8 +554,7 @@
       form.type.value = etat.onglet; // on ajoute dans la rubrique ouverte
       $("#titre-fenetre").textContent = BOUTON_AJOUT[etat.onglet].replace("+ ", "");
     }
-    $("#apercu").hidden = !photoFenetre;
-    $("#apercu").src = photoFenetre ? srcImage(photoFenetre) : "";
+    afficherGalerie();
     $("#erreur-produit").hidden = true;
     majGamme();
     fenetre.showModal();
@@ -545,22 +564,30 @@
   $("#btn-annuler").addEventListener("click", () => fenetre.close());
 
   form.photo.addEventListener("change", async () => {
-    if (!form.photo.files[0]) return;
-    try {
-      photoFenetre = await preparerPhoto(form.photo.files[0]);
-      $("#apercu").src = srcImage(photoFenetre);
-      $("#apercu").hidden = false;
-    } catch {
-      alert("Cette photo n'a pas pu être lue. Essayez une photo au format JPG ou PNG.");
+    const fichiers = [...form.photo.files];
+    form.photo.value = ""; // permet de rechoisir les mêmes fichiers
+    if (!fichiers.length) return;
+    const place = MAX_PHOTOS - photosFenetre.length;
+    if (place <= 0) return alert(`Maximum ${MAX_PHOTOS} photos par produit.`);
+    if (fichiers.length > place) alert(`Maximum ${MAX_PHOTOS} photos par produit : seules les ${place} premières sont ajoutées.`);
+    let echecs = 0;
+    for (const f of fichiers.slice(0, place)) {
+      try {
+        photosFenetre.push(await preparerPhoto(f));
+        afficherGalerie();
+      } catch {
+        echecs++;
+      }
     }
+    if (echecs) alert(`${echecs} photo${echecs > 1 ? "s n'ont" : " n'a"} pas pu être lue${echecs > 1 ? "s" : ""}. Essayez des photos au format JPG ou PNG.`);
   });
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const err = $("#erreur-produit");
     const nom = form.nom.value.trim();
-    if (!nom || !photoFenetre) {
-      err.textContent = !nom ? "Indiquez le nom du produit." : "Choisissez une photo.";
+    if (!nom || !photosFenetre.length) {
+      err.textContent = !nom ? "Indiquez le nom du produit." : "Ajoutez au moins une photo.";
       err.hidden = false;
       return;
     }
@@ -570,7 +597,8 @@
       nom, marque, type, genre: form.genre.value,
       gamme: type === "montre" ? form.gamme.value : undefined,
       prix: lirePrix(form.prix.value),
-      image: photoFenetre,
+      image: photosFenetre[0],
+      photos: photosFenetre.slice(1),
       badge: form.badge.value.trim() || undefined,
       description: form.description.value.trim() || `${nom}, disponible en boutique à La Maison du Temps.`,
       details: form.details.value.split("\n").map((l) => l.trim()).filter(Boolean),
@@ -619,20 +647,24 @@
       const elements = [...Object.values(cat.modifs), ...cat.ajouts, ...Object.values(cat.actus.modifs), ...cat.actus.ajouts];
       const arbre = [];
       const remplacements = {};
-      for (const el of elements) {
-        const photo = etat.photos[el.image];
-        if (!photo) continue;
-        if (!remplacements[el.image]) {
+      const envoyer = async (el, cle) => {
+        const photo = etat.photos[cle];
+        if (!photo) return cle; // photo déjà en ligne
+        if (!remplacements[cle]) {
           const nom = el.nom || el.titre || etat.base.find((p) => cat.modifs[p.id] === el)?.nom ||
             etat.baseActus.find((a) => cat.actus.modifs[a.id] === el)?.titre || "photo";
           const dossier = el.nom !== undefined || Object.values(cat.modifs).includes(el) ? "produits" : "actualites";
           const chemin = `images/${dossier}/${slug(nom)}-${Date.now().toString(36)}${arbre.length}.jpg`;
           const blob = await gh("/git/blobs", { method: "POST", body: JSON.stringify({ content: await blobVersBase64(photo.blob), encoding: "base64" }) });
           arbre.push({ path: chemin, mode: "100644", type: "blob", sha: blob.sha });
-          remplacements[el.image] = chemin;
+          remplacements[cle] = chemin;
           etat.apercus[chemin] = photo.url;
         }
-        el.image = remplacements[el.image];
+        return remplacements[cle];
+      };
+      for (const el of elements) {
+        if (el.image) el.image = await envoyer(el, el.image);
+        if (Array.isArray(el.photos)) for (let i = 0; i < el.photos.length; i++) el.photos[i] = await envoyer(el, el.photos[i]);
       }
 
       // 3. Enregistrer le catalogue et publier en une seule fois

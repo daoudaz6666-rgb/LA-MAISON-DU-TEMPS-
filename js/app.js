@@ -624,15 +624,27 @@
     const economie = aPrix(p) && p.ancienPrix ? Math.round((1 - p.prix / p.ancienPrix) * 100) : 0;
     const boutonFav = `<button class="icon-btn fav-btn ${fav ? "actif" : ""}" style="position:static;width:52px;height:52px;border:1px solid var(--bord);flex-shrink:0" data-action="favori" data-id="${p.id}" aria-label="Favori">${ICONES.coeur}</button>`;
     const iconeWa = ICONES.whatsapp.replace("<svg", '<svg width="20" height="20"');
+    const photos = [p.image, ...(p.photos || [])].filter(Boolean).map((src) => src.replace("w=800&h=800", "w=1200&h=1200"));
+    let vue = 0;
 
     $("#page").innerHTML = `
       <div class="container">
         <a href="#/boutique?type=${p.type}&genre=${p.genre}" class="retour">${ICONES.retour} Retour à la boutique</a>
         <div class="fiche">
-          <div class="fiche-media">
-            <img src="${p.image.replace("w=800&h=800", "w=1200&h=1200")}" alt="${esc(p.nom)}">
-            ${p.badge ? `<span class="badge">${esc(p.badge)}</span>` : ""}
-            ${p.illustration ? `<span class="illus">Photo d'illustration — demandez-nous les photos du modèle réel</span>` : ""}
+          <div class="fiche-galerie">
+            <div class="fiche-media">
+              <img id="photo-fiche" src="${esc(photos[0])}" alt="${esc(p.nom)}">
+              ${p.badge ? `<span class="badge">${esc(p.badge)}</span>` : ""}
+              ${p.illustration ? `<span class="illus">Photo d'illustration — demandez-nous les photos du modèle réel</span>` : ""}
+              ${photos.length > 1 ? `
+                <button class="galerie-fleche prec" data-pas="-1" aria-label="Photo précédente">‹</button>
+                <button class="galerie-fleche suiv" data-pas="1" aria-label="Photo suivante">›</button>
+                <span class="galerie-compteur" id="compteur-fiche">1 / ${photos.length}</span>` : ""}
+            </div>
+            ${photos.length > 1 ? `
+            <div class="miniatures">
+              ${photos.map((src, i) => `<button class="miniature${i === 0 ? " actif" : ""}" data-i="${i}" aria-label="Photo ${i + 1}"><img src="${esc(src)}" alt="" loading="lazy"></button>`).join("")}
+            </div>` : ""}
           </div>
           <div class="fiche-info">
             <span class="carte-cat">${libelleType(p.type)} · ${libelleGenre(p.genre)}${vraieMarque(p.marque) ? " · " + esc(p.marque) : ""}</span>
@@ -672,6 +684,28 @@
       $("#qte-fiche").textContent = qte;
     }));
     $("#ajout-fiche")?.addEventListener("click", () => ajouterAuPanier(p.id, qte));
+
+    // Galerie : miniatures, flèches et glissement au doigt
+    if (photos.length > 1) {
+      const montrer = (i) => {
+        vue = (i + photos.length) % photos.length;
+        $("#photo-fiche").src = photos[vue];
+        $("#compteur-fiche").textContent = `${vue + 1} / ${photos.length}`;
+        $$(".miniature").forEach((m, k) => m.classList.toggle("actif", k === vue));
+        $$(".miniature")[vue].scrollIntoView({ block: "nearest", inline: "nearest" });
+      };
+      $$(".miniature").forEach((m) => m.addEventListener("click", () => montrer(Number(m.dataset.i))));
+      $$(".galerie-fleche").forEach((b) => b.addEventListener("click", () => montrer(vue + Number(b.dataset.pas))));
+      const media = $(".fiche-media");
+      let x0 = null;
+      media.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+      media.addEventListener("touchend", (e) => {
+        if (x0 === null) return;
+        const dx = e.changedTouches[0].clientX - x0;
+        x0 = null;
+        if (Math.abs(dx) > 40) montrer(vue + (dx < 0 ? 1 : -1));
+      });
+    }
   }
 
   // ---------- Panier ----------
