@@ -124,7 +124,10 @@ window.CATALOGUE_ADMIN = {
     "Boîtier carré",
     "Disponible en boutique"
    ],
-   "illustration": false
+   "illustration": false,
+   "photos": [
+    "images/produits/cartier-santos-mwwep4210.jpg"
+   ]
   }
  },
  "ajouts": [
