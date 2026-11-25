@@ -82,7 +82,10 @@ window.CATALOGUE_ADMIN = {
     "Affichage jour et date",
     "Disponible en boutique"
    ],
-   "illustration": false
+   "illustration": false,
+   "photos": [
+    "images/produits/rolex-day-date-mwwemh8q0.jpg"
+   ]
   },
   "6": {
    "nom": "Audemars Piguet squeletton",
