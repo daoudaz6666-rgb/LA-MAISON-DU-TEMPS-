@@ -41,7 +41,12 @@ window.CATALOGUE_ADMIN = {
     "Bracelet intégré",
     "Disponible en boutique"
    ],
-   "illustration": false
+   "illustration": false,
+   "photos": [
+    "images/produits/patek-philippe-nautilus-mwwejyuj0.jpg",
+    "images/produits/patek-philippe-nautilus-mwwek0i51.jpg",
+    "images/produits/patek-philippe-nautilus-mwwek2eg2.jpg"
+   ]
   },
   "3": {
    "prix": 90000,
