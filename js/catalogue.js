@@ -133,16 +133,20 @@ window.CATALOGUE_ADMIN = {
  "ajouts": [
   {
    "id": 1000,
-   "nom": "Rolex day-date",
-   "marque": "Rolex",
+   "nom": "Audemars Piguet automatique",
+   "marque": "Audemars Piguet",
    "type": "montre",
    "genre": "homme",
    "gamme": "marque",
-   "prix": 85000,
-   "image": "images/produits/rolex-day-date-mwtvsatx0.jpg",
-   "description": "Rolex day-date, disponible en boutique à La Maison du Temps.",
+   "prix": 95000,
+   "image": "images/produits/audemars-piguet-automatique-mwwetyj10.jpg",
+   "photos": [
+    "images/produits/audemars-piguet-automatique-mwwetzs11.jpg",
+    "images/produits/audemars-piguet-automatique-mwweu1752.jpg"
+   ],
+   "description": "Montre mécanique classique",
    "details": [
-    "Marque : Rolex"
+    "Marque : Audemars Piguet"
    ],
    "note": 4.8
   }
