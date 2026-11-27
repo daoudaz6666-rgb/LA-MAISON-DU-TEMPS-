@@ -3,8 +3,8 @@
 window.CATALOGUE_ADMIN = {
  "modifs": {
   "1": {
-   "prix": 15000,
-   "image": "images/produits/patek-philippe-geneve-mwmk4sgf0.jpg",
+   "prix": 10000,
+   "image": "images/produits/casio-mwyj5wm70.jpg",
    "illustration": false,
    "nom": "CASIO",
    "marque": "CASIO",
@@ -14,13 +14,19 @@ window.CATALOGUE_ADMIN = {
    "badge": "Prestige",
    "description": "Un cadran épuré et des finitions d'exception.",
    "photos": [
-    "images/produits/casio-mwur8mnp0.jpg",
-    "images/produits/casio-mwur8no41.jpg",
-    "images/produits/casio-mwur8ogk2.jpg"
+    "images/produits/casio-mwyj5xol1.jpg",
+    "images/produits/casio-mwyj5yex2.jpg",
+    "images/produits/casio-mwyj5z423.jpg",
+    "images/produits/casio-mwyj5zsr4.jpg",
+    "images/produits/casio-mwyj60i15.jpg",
+    "images/produits/casio-mwyj614i6.jpg",
+    "images/produits/casio-mwyj61tt7.jpg",
+    "images/produits/casio-mwyj62ic8.jpg",
+    "images/produits/casio-mwyj63ax9.jpg"
    ],
    "details": [
-    "Marque : Patek Philippe",
-    "Collection : Genève",
+    "Marque : Casio",
+    "Collection :",
     "Style habillé",
     "Disponible en boutique"
    ]
