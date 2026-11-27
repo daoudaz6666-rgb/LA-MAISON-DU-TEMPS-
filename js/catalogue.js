@@ -139,6 +139,33 @@ window.CATALOGUE_ADMIN = {
     "images/produits/cartier-santos-mwwep4210.jpg"
    ]
   },
+  "15": {
+   "nom": "Tissot",
+   "marque": "Tissot",
+   "type": "montre",
+   "genre": "mixte",
+   "gamme": "marque",
+   "prix": 15000,
+   "image": "images/produits/tissot-mwz7elkd0.jpg",
+   "photos": [
+    "images/produits/tissot-mwz7emqw1.jpg",
+    "images/produits/tissot-mwz7enm92.jpg",
+    "images/produits/tissot-mwz7eovp3.jpg",
+    "images/produits/tissot-mwz7epqy4.jpg",
+    "images/produits/tissot-mwz7eqgk5.jpg",
+    "images/produits/tissot-mwz7ereq6.jpg",
+    "images/produits/tissot-mwz7es757.jpg"
+   ],
+   "badge": "Tendance",
+   "description": "Le savoir-faire suisse accessible, avec des modèles classiques et sportifs.",
+   "details": [
+    "Marque : Tissot",
+    "Savoir-faire suisse",
+    "Plusieurs modèles",
+    "Disponible en boutique"
+   ],
+   "illustration": false
+  },
   "17": {
    "masque": true,
    "supprime": true
