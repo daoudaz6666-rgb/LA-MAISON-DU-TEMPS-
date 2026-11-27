@@ -93,6 +93,10 @@ window.CATALOGUE_ADMIN = {
     "images/produits/rolex-day-date-mwwemh8q0.jpg"
    ]
   },
+  "5": {
+   "masque": true,
+   "supprime": true
+  },
   "6": {
    "nom": "Audemars Piguet squeletton",
    "marque": "Audemars Piguet",
@@ -133,6 +137,30 @@ window.CATALOGUE_ADMIN = {
    "illustration": false,
    "photos": [
     "images/produits/cartier-santos-mwwep4210.jpg"
+   ]
+  },
+  "19": {
+   "image": "images/produits/curren-mwz6sb6z0.jpg",
+   "illustration": false,
+   "nom": "Curren",
+   "marque": "Curren",
+   "type": "montre",
+   "genre": "femme",
+   "gamme": "marque",
+   "prix": 15000,
+   "photos": [
+    "images/produits/curren-mwz6scar1.jpg",
+    "images/produits/curren-mwz6sdk62.jpg",
+    "images/produits/curren-mwz6send3.jpg",
+    "images/produits/curren-mwz6sfjc4.jpg",
+    "images/produits/curren-mwz6sgek5.jpg"
+   ],
+   "badge": "",
+   "description": "Une montre robuste au look affirmé, à petit prix.",
+   "details": [
+    "Marque : Curren",
+    "Bon rapport qualité-prix",
+    "Disponible en boutique"
    ]
   }
  },
