@@ -139,6 +139,32 @@ window.CATALOGUE_ADMIN = {
     "images/produits/cartier-santos-mwwep4210.jpg"
    ]
   },
+  "17": {
+   "masque": true,
+   "supprime": true
+  },
+  "18": {
+   "nom": "Poedagar chronographe",
+   "marque": "Poedagar",
+   "type": "montre",
+   "genre": "homme",
+   "gamme": "marque",
+   "prix": 25000,
+   "image": "images/produits/poedagar-chronographe-mwz6tz5x0.jpg",
+   "photos": [
+    "images/produits/poedagar-chronographe-mwz6u03y1.jpg",
+    "images/produits/poedagar-chronographe-mwz6u0we2.jpg"
+   ],
+   "badge": "",
+   "description": "Un look luxe et habillé, avec date et finitions brillantes.",
+   "details": [
+    "Marque : Poedagar",
+    "Guichet date",
+    "Bon rapport qualité-prix",
+    "Disponible en boutique"
+   ],
+   "illustration": false
+  },
   "19": {
    "image": "images/produits/curren-mwz6sb6z0.jpg",
    "illustration": false,
